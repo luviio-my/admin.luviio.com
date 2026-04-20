@@ -547,8 +547,8 @@
         <div class="sidebar-link" data-page="templates" data-perm="templates" onclick="navigateTo('templates')">
           <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg> Templates
         </div>
-        <div class="sidebar-link" data-page="imgbb" data-perm="imgbb" onclick="navigateTo('imgbb')">
-          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> IMGBB Manager
+        <div class="sidebar-link" data-page="images" data-perm="images" onclick="navigateTo('images')">
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Image Manager
         </div>
       </nav>
 
@@ -614,12 +614,12 @@
   </div>
 
   <!-- Upload naming dialog -->
-  <div id="uploadNameModal" class="modal-overlay" onclick="if(event.target===this)cancelImgBBUpload()">
+  <div id="uploadNameModal" class="modal-overlay" onclick="if(event.target===this)cancelImageUpload()">
     <div class="modal-content" style="max-width:420px;">
       <div class="p-6 border-b border-slate-100">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold text-lg text-slate-800">Name This Image</h3>
-          <button onclick="cancelImgBBUpload()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+          <button onclick="cancelImageUpload()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
@@ -640,11 +640,11 @@
           <p class="text-[10px] text-slate-400 mt-1">This name will be saved for easy identification</p>
         </div>
         <div class="flex gap-3 pt-2">
-          <button onclick="confirmImgBBUpload()" class="btn-primary flex-1 justify-center" id="confirmUploadBtn">
+          <button onclick="confirmImageUpload()" class="btn-primary flex-1 justify-center" id="confirmUploadBtn">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             Upload & Save
           </button>
-          <button onclick="cancelImgBBUpload()" class="btn-secondary">Cancel</button>
+          <button onclick="cancelImageUpload()" class="btn-secondary">Cancel</button>
         </div>
       </div>
     </div>
@@ -681,6 +681,11 @@
     const EMAILJS_TEMPLATE = "template_2cltd1d";
 
     // ==========================================
+    // IMAGE UPLOAD ENDPOINT (Cloudflare Workers)
+    // ==========================================
+    const IMAGE_UPLOAD_URL = "https://green-credit-0bcf.people-luviio.workers.dev/";
+
+    // ==========================================
     // STATE MANAGEMENT
     // ==========================================
     let currentPage = 'dashboard';
@@ -707,7 +712,6 @@
       while ((match = urlRegex.exec(remarks)) !== null) {
         images.push(match[1]);
       }
-      // Remove image URLs from text for cleaner display
       text = remarks.replace(urlRegex, '').replace(/\s{2,}/g, ' ').trim();
       return { text, images };
     }
@@ -942,7 +946,7 @@
       expenses: { label: 'Expenses', default: false }, 'company-subs': { label: 'Company Subs', default: false },
       team: { label: 'Team', default: false }, crew: { label: 'Crew Mgmt', default: false },
       emails: { label: 'Active Emails', default: false }, templates: { label: 'Templates', default: true },
-      imgbb: { label: 'IMGBB', default: true }, delete: { label: 'Delete Entries', default: false },
+      images: { label: 'Images', default: true }, delete: { label: 'Delete Entries', default: false },
       edit: { label: 'Edit Entries', default: true }, sendEmail: { label: 'Send Emails', default: true },
       sendWhatsApp: { label: 'Send WhatsApp', default: true }
     };
@@ -1184,13 +1188,13 @@
     // NAVIGATION
     // ==========================================
     function navigateTo(page) {
-      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','imgbb'].includes(p)); if (f) showPage(f); showToast('No access.','warning'); return; }
+      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images'].includes(p)); if (f) showPage(f); showToast('No access.','warning'); return; }
       currentPage = page;
       window.history.pushState({page}, '', `/admin/${page}`);
       showPage(page);
     }
     function showPage(page) {
-      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','imgbb'].includes(p)); if (f) page = f; else page = 'dashboard'; }
+      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images'].includes(p)); if (f) page = f; else page = 'dashboard'; }
       currentPage = page;
       const content = document.getElementById('pageContent');
       const title = document.getElementById('pageTitle');
@@ -1199,10 +1203,10 @@
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('sidebarOverlay').classList.add('hidden');
       document.getElementById('notifDropdown').classList.remove('show');
-      const titles = { 'dashboard':'Dashboard','clients':'Client Management','subscriptions':'Active Subscriptions','requests':'Client Requests','invoices':'Invoices & Cashbills','feedback':'Feedback & Complaints','expenses':'Company Expenses','company-subs':'Company Subscriptions','team':'Team Members','crew':'Crew Management','emails':'Active Email Accounts','templates':'Message Templates','imgbb':'IMGBB Image Manager' };
+      const titles = { 'dashboard':'Dashboard','clients':'Client Management','subscriptions':'Active Subscriptions','requests':'Client Requests','invoices':'Invoices & Cashbills','feedback':'Feedback & Complaints','expenses':'Company Expenses','company-subs':'Company Subscriptions','team':'Team Members','crew':'Crew Management','emails':'Active Email Accounts','templates':'Message Templates','images':'Image Manager' };
       title.textContent = titles[page] || page;
       content.innerHTML = '<div class="flex items-center justify-center h-64"><div class="spinner" style="width:32px;height:32px;border-width:3px;"></div></div>';
-      setTimeout(() => { switch(page) { case 'dashboard': renderDashboard(); break; case 'clients': renderClients(); break; case 'subscriptions': renderSubscriptions(); break; case 'requests': renderRequests(); break; case 'invoices': renderInvoices(); break; case 'feedback': renderFeedback(); break; case 'expenses': renderExpenses(); break; case 'company-subs': renderCompanySubs(); break; case 'team': renderTeam(); break; case 'crew': renderCrew(); break; case 'emails': renderEmails(); break; case 'templates': renderTemplates(); break; case 'imgbb': renderImgBB(); break; default: renderDashboard(); } }, 300);
+      setTimeout(() => { switch(page) { case 'dashboard': renderDashboard(); break; case 'clients': renderClients(); break; case 'subscriptions': renderSubscriptions(); break; case 'requests': renderRequests(); break; case 'invoices': renderInvoices(); break; case 'feedback': renderFeedback(); break; case 'expenses': renderExpenses(); break; case 'company-subs': renderCompanySubs(); break; case 'team': renderTeam(); break; case 'crew': renderCrew(); break; case 'emails': renderEmails(); break; case 'templates': renderTemplates(); break; case 'images': renderImages(); break; default: renderDashboard(); } }, 300);
     }
     window.addEventListener('popstate', e => { if(currentUser && e.state?.page) showPage(e.state.page); else if(currentUser) showPage(window.location.pathname.replace('/admin/','')||'dashboard'); });
     function toggleSidebar() { const sb = document.getElementById('sidebar'); if (sb.classList.contains('hidden-sidebar')) return; sb.classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
@@ -1405,112 +1409,357 @@
     function previewTemplate(id) { const t = MESSAGE_TEMPLATES.find(tp => tp.id === id); if (!t || id === 'custom') return; openCustomerNotif({ clientEmail: 'example@client.com', clientName: 'Example Client', clientPhone: '+60 12-345 6789', defaultTitle: t.emailTitle, defaultMessage: t.emailMessage, serviceName: 'Service Name', renewedBy: 'Luviio Team', requestedBy: 'Client', relevantDate: formatDate(new Date()) }); setTimeout(() => selectMsgTemplate(id), 100); }
 
     // ==========================================
-    // IMGBB - WITH NAMING DIALOG
+    // IMAGE MANAGER (Cloudflare Workers Upload)
     // ==========================================
-    async function renderImgBB() {
+    async function renderImages() {
       const content = document.getElementById('pageContent');
       try {
-        const snap = await db.collection('imgbb_images').orderBy('uploadedAt','desc').limit(50).get();
-        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">IMGBB Image Manager</h3><p class="text-xs text-slate-500 mt-0.5">Upload, name, preview, and manage images</p></div>${hasPermission('edit')?`<button onclick="uploadToImgBB()" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Upload Image</button>`:''}</div><input type="file" id="imgbbFileInput" accept="image/*" class="hidden" onchange="handleImgBBFileSelect(event)"><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${snap.docs.length===0?'<div class="col-span-full content-card p-12 text-center text-slate-400">No images uploaded yet</div>':snap.docs.map(doc=>{const img=doc.data();return`<div class="content-card p-2 group relative"><div class="relative aspect-square overflow-hidden rounded-lg cursor-pointer" onclick="openImagePreview('${img.url}')"><img src="${img.thumbnail||img.url}" alt="${escapeHtml(img.filename||img.imageName||'')}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-lg flex items-center justify-center gap-2"><button onclick="event.stopPropagation();openImagePreview('${img.url}')" class="p-2.5 bg-white rounded-xl hover:bg-gray-100 shadow-lg" title="Preview"><svg class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button><button onclick="event.stopPropagation();copyToClipboard('${img.url}')" class="p-2.5 bg-white rounded-xl hover:bg-gray-100 shadow-lg" title="Copy URL"><svg class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>${hasPermission('delete')?`<button onclick="event.stopPropagation();deleteDoc('imgbb_images','${doc.id}','image')" class="p-2.5 bg-white rounded-xl hover:bg-red-50 shadow-lg" title="Delete"><svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></div><div class="mt-2 px-1"><p class="text-[11px] text-slate-700 font-medium truncate" title="${escapeHtml(img.imageName||img.filename||'')}">${img.imageName||img.filename||'unnamed'}</p>${(img.imageName && img.filename && img.imageName !== img.filename)?`<p class="text-[9px] text-slate-400 truncate">${img.filename}</p>`:''}<div class="flex items-center justify-between"><p class="text-[10px] text-slate-400">${formatFileSize(img.size)}</p><p class="text-[10px] text-slate-400">${formatDate(img.uploadedAt)}</p></div>${img.remarks?`<p class="text-[9px] text-slate-400 mt-0.5 truncate" title="${escapeHtml(img.remarks)}">${img.remarks}</p>`:''}</div></div>`;}).join('')}</div></div>`;
+        const snap = await db.collection('uploaded_images').orderBy('uploadedAt','desc').limit(50).get();
+        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">Image Manager</h3><p class="text-xs text-slate-500 mt-0.5">Upload, name, preview, and manage images · JPG, PNG, WebP, GIF, AVIF · Max 10 MB each · Up to ${UPLOAD_LIMIT} at once</p></div>${hasPermission('edit')?`<button onclick="triggerImageUpload()" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Upload Images</button>`:''}</div><input type="file" id="imageFileInput" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple class="hidden" onchange="handleImageFileSelect(event)"><div id="dropZone" class="border-2 border-dashed border-slate-200 rounded-2xl p-10 text-center transition-all duration-200 hover:border-pink-300 hover:bg-pink-50/30 cursor-pointer" onclick="triggerImageUpload()"><svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg><p class="text-sm font-medium text-slate-600">Drag & drop images here</p><p class="text-xs text-slate-400 mt-1">or click to browse · JPG, PNG, WebP, GIF, AVIF · Max 10 MB · Up to ${UPLOAD_LIMIT} files</p></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${snap.docs.length===0?'<div class="col-span-full content-card p-12 text-center text-slate-400">No images uploaded yet</div>':snap.docs.map(doc=>{const img=doc.data();return`<div class="content-card p-2 group relative"><div class="relative aspect-square overflow-hidden rounded-lg cursor-pointer" onclick="openImagePreview('${img.url}')"><img src="${img.url}" alt="${escapeHtml(img.imageName||img.filename||'')}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"><div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-lg flex items-center justify-center gap-2"><button onclick="event.stopPropagation();openImagePreview('${img.url}')" class="p-2.5 bg-white rounded-xl hover:bg-gray-100 shadow-lg" title="Preview"><svg class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button><button onclick="event.stopPropagation();copyToClipboard('${img.url}')" class="p-2.5 bg-white rounded-xl hover:bg-gray-100 shadow-lg" title="Copy URL"><svg class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>${hasPermission('delete')?`<button onclick="event.stopPropagation();deleteDoc('uploaded_images','${doc.id}','image')" class="p-2.5 bg-white rounded-xl hover:bg-red-50 shadow-lg" title="Delete"><svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`:''}</div></div><div class="mt-2 px-1"><p class="text-[11px] text-slate-700 font-medium truncate" title="${escapeHtml(img.imageName||img.filename||'')}">${img.imageName||img.filename||'unnamed'}</p>${(img.imageName && img.filename && img.imageName !== img.filename)?`<p class="text-[9px] text-slate-400 truncate">${img.filename}</p>`:''}<div class="flex items-center justify-between"><p class="text-[10px] text-slate-400">${formatFileSize(img.size)}</p><p class="text-[10px] text-slate-400">${formatDate(img.uploadedAt)}</p></div>${img.remarks?`<p class="text-[9px] text-slate-400 mt-0.5 truncate" title="${escapeHtml(img.remarks)}">${img.remarks}</p>`:''}</div></div>`;}).join('')}</div></div>`;
+
+        // Attach drag & drop events
+        const dz = document.getElementById('dropZone');
+        if (dz) {
+          let dragCounter = 0;
+          dz.addEventListener('dragenter', e => { e.preventDefault(); e.stopPropagation(); dragCounter++; dz.classList.add('!border-pink-400','!bg-pink-50/50'); });
+          dz.addEventListener('dragleave', e => { e.preventDefault(); e.stopPropagation(); dragCounter--; if (dragCounter <= 0) { dragCounter = 0; dz.classList.remove('!border-pink-400','!bg-pink-50/50'); } });
+          dz.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); });
+          dz.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); dragCounter = 0; dz.classList.remove('!border-pink-400','!bg-pink-50/50'); const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')); if (!files.length) { showToast('No valid image files detected', 'error'); return; } handleImageFileSelect({ target: { files, value: '' }, preventDefault: ()=>{} }); });
+        }
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
     function formatFileSize(b) { if(!b) return '?'; if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
 
-    function uploadToImgBB() { document.getElementById('imgbbFileInput').click(); }
+    const UPLOAD_LIMIT = 5;
+    const ALLOWED_TYPES = ['image/jpeg','image/png','image/webp','image/gif','image/avif'];
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-    function handleImgBBFileSelect(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      if (file.size > 32*1024*1024) { showToast('File too large (max 32MB)','error'); event.target.value=''; return; }
+    function triggerImageUpload() { document.getElementById('imageFileInput').click(); }
 
-      // Store file and show naming dialog
-      pendingUploadFile = file;
-
-      // Show thumbnail preview in naming dialog
-      const thumbContainer = document.getElementById('uploadThumbPreview');
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        thumbContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview">`;
-      };
-      reader.readAsDataURL(file);
-
-      document.getElementById('uploadFileName').textContent = file.name;
-      document.getElementById('uploadFileSize').textContent = formatFileSize(file.size);
-
-      // Auto-generate name from filename (without extension)
-      const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-      document.getElementById('uploadImageName').value = baseName;
-
-      document.getElementById('uploadNameModal').classList.add('show');
-
-      // Focus the name input
-      setTimeout(() => {
-        const nameInput = document.getElementById('uploadImageName');
-        nameInput.focus();
-        nameInput.select();
-      }, 200);
-
+    function handleImageFileSelect(event) {
+      const files = Array.from(event.target.files);
       event.target.value = '';
+      if (!files.length) return;
+
+      // Validate count
+      if (files.length > UPLOAD_LIMIT) {
+        showToast(`Maximum ${UPLOAD_LIMIT} images at a time. You selected ${files.length}.`, 'error');
+        return;
+      }
+
+      // Validate each file
+      const valid = [];
+      for (const f of files) {
+        if (!ALLOWED_TYPES.includes(f.type)) {
+          showToast(`"${f.name}" is not a supported format (JPG, PNG, WebP, GIF, AVIF).`, 'error');
+          continue;
+        }
+        if (f.size > MAX_FILE_SIZE) {
+          showToast(`"${f.name}" exceeds 10 MB limit (${formatFileSize(f.size)}).`, 'error');
+          continue;
+        }
+        valid.push(f);
+      }
+      if (!valid.length) return;
+
+      // Single file → show naming dialog
+      if (valid.length === 1) {
+        showSingleNamingDialog(valid[0]);
+        return;
+      }
+
+      // Multiple files → batch naming dialog
+      showBatchNamingDialog(valid);
     }
 
-    function cancelImgBBUpload() {
+    function showSingleNamingDialog(file) {
+      pendingUploadFile = file;
+      const thumbContainer = document.getElementById('uploadThumbPreview');
+      const reader = new FileReader();
+      reader.onload = e => { thumbContainer.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview">`; };
+      reader.readAsDataURL(file);
+      document.getElementById('uploadFileName').textContent = file.name;
+      document.getElementById('uploadFileSize').textContent = formatFileSize(file.size);
+      document.getElementById('uploadImageName').value = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+      document.getElementById('uploadNameModal').classList.add('show');
+      setTimeout(() => { const ni = document.getElementById('uploadImageName'); ni.focus(); ni.select(); }, 200);
+    }
+
+    function showBatchNamingDialog(files) {
+      pendingUploadFile = files; // Store array
+      const modal = document.getElementById('uploadNameModal');
+      const content = modal.querySelector('.modal-content');
+
+      const fileListHTML = files.map((f, i) => `
+        <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl" id="batch-item-${i}">
+          <div class="w-14 h-14 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0 batch-thumb" data-idx="${i}">
+            <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-medium text-slate-600 truncate">${escapeHtml(f.name)}</p>
+            <p class="text-[10px] text-slate-400">${formatFileSize(f.size)}</p>
+            <input type="text" class="input-field !mt-1.5 !py-1.5 !text-xs batch-name-input" data-idx="${i}" value="${escapeHtml(f.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '))}" placeholder="Image name...">
+          </div>
+        </div>
+      `).join('');
+
+      content.innerHTML = `
+        <div class="p-6 border-b border-slate-100">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold text-lg text-slate-800">Name ${files.length} Images</h3>
+            <button onclick="cancelImageUpload()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Supported: JPG, PNG, WebP, GIF, AVIF · Max 10 MB each · Up to ${UPLOAD_LIMIT} at once</p>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-2 mb-2">
+            <button onclick="applyPrefixToBatch()" class="btn-secondary !py-1.5 !px-3 !text-[10px]">Apply Prefix to All</button>
+            <button onclick="setSameNameBatch()" class="btn-secondary !py-1.5 !px-3 !text-[10px]">Same Name + Number</button>
+          </div>
+          <div class="space-y-2 max-h-[45vh] overflow-y-auto pr-1">${fileListHTML}</div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Internal Remarks (applies to all)</label>
+            <input type="text" id="batchRemarks" class="input-field" placeholder="Optional...">
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button onclick="confirmBatchUpload()" class="btn-primary flex-1 justify-center" id="batchUploadBtn">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              Upload All (${files.length})
+            </button>
+            <button onclick="cancelImageUpload()" class="btn-secondary">Cancel</button>
+          </div>
+        </div>`;
+
+      // Load thumbnails
+      files.forEach((f, i) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const el = document.querySelector(`.batch-thumb[data-idx="${i}"]`);
+          if (el) el.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="">`;
+        };
+        reader.readAsDataURL(f);
+      });
+
+      modal.classList.add('show');
+      setTimeout(() => { const first = document.querySelector('.batch-name-input'); if (first) { first.focus(); first.select(); } }, 200);
+    }
+
+    function applyPrefixToBatch() {
+      const prefix = prompt('Enter prefix to add to all names:') || '';
+      if (!prefix) return;
+      document.querySelectorAll('.batch-name-input').forEach(input => {
+        input.value = prefix + ' ' + input.value;
+      });
+      showToast('Prefix applied');
+    }
+
+    function setSameNameBatch() {
+      const base = prompt('Enter base name (numbers will be appended automatically):') || '';
+      if (!base) return;
+      document.querySelectorAll('.batch-name-input').forEach((input, i) => {
+        input.value = base + ' ' + (i + 1);
+      });
+      showToast('Names set');
+    }
+
+    async function confirmBatchUpload() {
+      const files = Array.isArray(pendingUploadFile) ? pendingUploadFile : [pendingUploadFile];
+      const btn = document.getElementById('batchUploadBtn');
+      const remarks = document.getElementById('batchRemarks')?.value || '';
+
+      // Collect names
+      const names = [];
+      let hasEmpty = false;
+      document.querySelectorAll('.batch-name-input').forEach(input => {
+        input.style.borderColor = '#e2e8f0';
+        input.style.boxShadow = '';
+        const val = input.value.trim();
+        if (!val) { hasEmpty = true; input.style.borderColor = '#ef4444'; }
+        names.push(val);
+      });
+      if (hasEmpty) { showToast('Please fill in all image names', 'error'); return; }
+
+      // ---- Check for duplicates ----
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Checking names...';
+
+      const nameSet = new Set();
+      let hasDupInForm = false;
+      for (let i = 0; i < names.length; i++) {
+        if (nameSet.has(names[i])) {
+          const input = document.querySelector(`.batch-name-input[data-idx="${i}"]`);
+          if (input) { input.style.borderColor = '#ef4444'; input.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }
+          hasDupInForm = true;
+        }
+        nameSet.add(names[i]);
+      }
+      if (hasDupInForm) {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg> Upload All (${files.length})`;
+        showToast('Duplicate names found within this batch. Please fix highlighted fields.', 'error');
+        return;
+      }
+
+      // Check against Firestore
+      let dbDupFound = false;
+      for (let i = 0; i < names.length; i++) {
+        if (await isImageNameTaken(names[i])) {
+          const input = document.querySelector(`.batch-name-input[data-idx="${i}"]`);
+          if (input) { input.style.borderColor = '#ef4444'; input.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }
+          dbDupFound = true;
+        }
+      }
+      if (dbDupFound) {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg> Upload All (${files.length})`;
+        showToast('Some names already exist in the database. Please fix highlighted fields.', 'error');
+        return;
+      }
+
+      // ---- Proceed with upload ----
+      let success = 0, failed = 0;
+      for (let i = 0; i < files.length; i++) {
+        btn.innerHTML = `<div class="spinner"></div> Uploading ${i + 1}/${files.length}...`;
+        const formData = new FormData();
+        formData.append('file', files[i]);
+        try {
+          const res = await fetch(IMAGE_UPLOAD_URL, { method: 'POST', body: formData });
+          if (!res.ok) throw new Error(res.status);
+          const data = await res.json();
+          if (data.url) {
+            await db.collection('uploaded_images').add({
+              url: data.url, filename: files[i].name, imageName: names[i],
+              size: files[i].size, mime: files[i].type, remarks: remarks,
+              uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            success++;
+          } else { failed++; }
+        } catch (e) { console.error(e); failed++; }
+      }
+
+      pendingUploadFile = null;
+      cancelImageUpload();
+      restoreSingleNamingDialog();
+
+      if (failed === 0) {
+        showToast(`${success} image${success > 1 ? 's' : ''} uploaded!`);
+        addNotification('Images Uploaded', `${success} image${success > 1 ? 's' : ''}`, 'success');
+      } else {
+        showToast(`${success} uploaded, ${failed} failed`, 'error');
+      }
+      renderImages();
+    }
+
+        async function isImageNameTaken(name) {
+      if (!name || !name.trim()) return false;
+      const snap = await db.collection('uploaded_images').where('imageName', '==', name.trim()).limit(1).get();
+      return !snap.empty;
+    }
+
+    function restoreSingleNamingDialog() {
+      const modal = document.getElementById('uploadNameModal');
+      const content = modal.querySelector('.modal-content');
+      content.innerHTML = `
+        <div class="p-6 border-b border-slate-100">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold text-lg text-slate-800">Name This Image</h3>
+            <button onclick="cancelImageUpload()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+            <div id="uploadThumbPreview" class="w-14 h-14 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p id="uploadFileName" class="text-sm font-medium text-slate-800 truncate">filename.jpg</p>
+              <p id="uploadFileSize" class="text-xs text-slate-500">0 KB</p>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Image Name *</label>
+            <input type="text" id="uploadImageName" class="input-field" placeholder="e.g., client-logo-v2" autofocus>
+            <p class="text-[10px] text-slate-400 mt-1">This name will be saved for easy identification</p>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button onclick="confirmImageUpload()" class="btn-primary flex-1 justify-center" id="confirmUploadBtn">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              Upload & Save
+            </button>
+            <button onclick="cancelImageUpload()" class="btn-secondary">Cancel</button>
+          </div>
+        </div>`;
+    }
+
+    function cancelImageUpload() {
       document.getElementById('uploadNameModal').classList.remove('show');
       pendingUploadFile = null;
       // Reset thumbnail
       document.getElementById('uploadThumbPreview').innerHTML = '<svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
     }
 
-    async function confirmImgBBUpload() {
+    async function confirmImageUpload() {
       const file = pendingUploadFile;
       if (!file) return;
+      if (Array.isArray(file)) { confirmBatchUpload(); return; }
 
       const imageName = document.getElementById('uploadImageName').value.trim();
       if (!imageName) { showToast('Please enter an image name', 'error'); document.getElementById('uploadImageName').focus(); return; }
 
-      // Close naming dialog and show uploading state
+      // ---- Duplicate name check ----
+      const nameInput = document.getElementById('uploadImageName');
+      nameInput.style.borderColor = '#e2e8f0'; // reset border first
+      const taken = await isImageNameTaken(imageName);
+      if (taken) {
+        showToast(`"${imageName}" already exists. Please use a different name.`, 'error');
+        nameInput.style.borderColor = '#ef4444';
+        nameInput.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)';
+        nameInput.focus();
+        nameInput.select();
+        // Clear red border on next typing
+        nameInput.oninput = () => {
+          nameInput.style.borderColor = '#e2e8f0';
+          nameInput.style.boxShadow = '';
+          nameInput.oninput = null;
+        };
+        return;
+      }
+
       document.getElementById('uploadNameModal').classList.remove('show');
       const btn = document.getElementById('confirmUploadBtn');
       btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Uploading...';
+      showToast('Uploading image...');
 
-      // Re-open dialog briefly to show progress (or use toast)
-      showToast('Uploading to IMGBB...');
-
-      const fd = new FormData();
-      fd.append('image', file);
+      const formData = new FormData();
+      formData.append('file', file);
 
       try {
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=b71c4d815f32121f479535866ad1de1c`, { method: 'POST', body: fd });
-        const result = await res.json();
-
-        if (result.success) {
+        const res = await fetch(IMAGE_UPLOAD_URL, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+        const data = await res.json();
+        if (data.url) {
           const remarks = prompt('Add internal remarks (optional):') || '';
-          await db.collection('imgbb_images').add({
-            url: result.data.url,
-            thumbnail: result.data.thumb?.url,
-            filename: file.name,
-            imageName: imageName,
-            size: file.size,
-            mime: file.type,
-            deleteUrl: result.data.delete_url,
-            remarks,
+          await db.collection('uploaded_images').add({
+            url: data.url, filename: file.name, imageName: imageName,
+            size: file.size, mime: file.type, remarks: remarks,
             uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
-          showToast(`"${imageName}" uploaded!`);
+          showToast(`"${imageName}" uploaded successfully!`);
           addNotification('Image Uploaded', imageName, 'success');
-          renderImgBB();
-        } else {
-          showToast('Upload failed', 'error');
-        }
+          renderImages();
+        } else { showToast('Upload failed - no URL returned', 'error'); }
       } catch (e) {
-        console.error(e);
+        console.error('Upload error:', e);
         showToast('Upload error: ' + e.message, 'error');
       }
 
       pendingUploadFile = null;
       btn.disabled = false;
       btn.innerHTML = '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg> Upload & Save';
-
-      // Reset thumbnail
       document.getElementById('uploadThumbPreview').innerHTML = '<svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>';
     }
 
@@ -1518,7 +1767,7 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && document.getElementById('uploadNameModal').classList.contains('show')) {
         e.preventDefault();
-        confirmImgBBUpload();
+        confirmImageUpload();
       }
     });
 
@@ -1761,7 +2010,7 @@
         closeImagePreview();
         closeModal();
         closeCustomerNotif();
-        if (document.getElementById('uploadNameModal').classList.contains('show')) cancelImgBBUpload();
+        if (document.getElementById('uploadNameModal').classList.contains('show')) cancelImageUpload();
       }
       // Arrow keys for gallery navigation
       if (document.getElementById('imagePreviewModal').classList.contains('show') && galleryImages.length > 1) {
