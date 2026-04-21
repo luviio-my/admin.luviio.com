@@ -743,25 +743,36 @@
     // ==========================================
     // GALLERY PREVIEW (multi-image from remarks)
     // ==========================================
-    function openGalleryPreview(images, activeIdx) {
-      if (!images || images.length === 0) return;
-      galleryImages = images;
-      galleryActiveIdx = activeIdx || 0;
-      const modal = document.getElementById('imagePreviewModal');
-      const strip = document.getElementById('galleryStrip');
-      document.getElementById('previewImage').src = galleryImages[galleryActiveIdx];
+function openGalleryPreview(images, activeIdx) {
+  if (!images || images.length === 0) return;
+  // Ensure images is always an array
+  if (typeof images === 'string') {
+    try { images = JSON.parse(images); } catch(e) { images = [images]; }
+  }
+  
+  galleryImages = images;
+  galleryActiveIdx = activeIdx || 0;
+  const modal = document.getElementById('imagePreviewModal');
+  const strip = document.getElementById('galleryStrip');
+  
+  document.getElementById('previewImage').src = galleryImages[galleryActiveIdx];
 
-      if (galleryImages.length > 1) {
-        strip.style.display = 'flex';
-        strip.innerHTML = galleryImages.map((url, i) =>
-          `<img src="${url}" class="${i === galleryActiveIdx ? 'active' : ''}" onclick="switchGalleryImage(${i})" alt="Gallery ${i + 1}" onerror="this.style.display='none'">`
-        ).join('');
-      } else {
-        strip.style.display = 'none';
-      }
-      modal.classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
+  if (galleryImages.length > 1) {
+    strip.style.display = 'flex';
+    strip.innerHTML = galleryImages.map((url, i) =>
+      `<img src="${url}" 
+            class="${i === galleryActiveIdx ? 'active' : ''}" 
+            onclick="switchGalleryImage(${i})" 
+            alt="Gallery ${i + 1}" 
+            onerror="this.style.display='none'">`
+    ).join('');
+  } else {
+    strip.style.display = 'none';
+  }
+  
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
 
     function switchGalleryImage(idx) {
       galleryActiveIdx = idx;
@@ -1971,14 +1982,19 @@ Best regards,
                           ${d.section ? `<span class="badge badge-purple text-[10px]">${d.section}</span>` : ''}
                         </div>
                         <p class="text-sm text-slate-600 leading-relaxed mb-2">${d.details || '-'}</p>
-                        ${images.length > 0 ? `
-                          <div class="flex gap-2 flex-wrap mt-1">
-                            ${images.slice(0, 4).map(url => `
-                              <img src="${url}" class="w-16 h-16 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity border border-slate-200" onclick="openGalleryPreview([${JSON.stringify(images)}], ${images.indexOf(url)})" alt="Attachment" loading="lazy" onerror="this.style.display='none'">
-                            `).join('')}
-                            ${images.length > 4 ? `<span class="text-xs text-slate-400 self-center">+${images.length - 4} more</span>` : ''}
-                          </div>
-                        ` : ''}
+ ${images.length > 0 ? `
+  <div class="flex gap-2 flex-wrap mt-1">
+    ${images.map((url, idx) => `
+      <img src="${url}" 
+           class="w-16 h-16 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity border border-slate-200" 
+           onclick="event.stopPropagation(); openGalleryPreview(${JSON.stringify(images)}, ${idx})" 
+           alt="Attachment ${idx+1}" 
+           loading="lazy" 
+           onerror="this.style.display='none'">
+    `).join('')}
+    ${images.length > 4 ? `<span class="text-xs text-slate-400 self-center">+${images.length - 4} more</span>` : ''}
+  </div>
+` : ''}
                         <div class="text-xs text-slate-400 mt-2">
                           Source: ${d.source ? `<a href="${d.source}" target="_blank" class="text-pink-600 hover:underline">${new URL(d.source).pathname}</a>` : '-'}
                           ${d.whatsapp ? `· WA: ${d.whatsapp}` : ''}
