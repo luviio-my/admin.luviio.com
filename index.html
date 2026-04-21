@@ -550,6 +550,20 @@
         <div class="sidebar-link" data-page="images" data-perm="images" onclick="navigateTo('images')">
           <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Image Manager
         </div>
+
+        <div class="mt-4 px-4"><span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Website Forms</span></div>
+        <div class="sidebar-link" data-page="newsletter" data-perm="newsletter" onclick="navigateTo('newsletter')">
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> Newsletter Subscribers
+        </div>
+        <div class="sidebar-link" data-page="content-updates" data-perm="content-updates" onclick="navigateTo('content-updates')">
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Content Updates
+        </div>
+        <div class="sidebar-link" data-page="uni-students" data-perm="uni-students" onclick="navigateTo('uni-students')">
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg> Uni Student Apps
+        </div>
+        <div class="sidebar-link" data-page="special-clients" data-perm="special-clients" onclick="navigateTo('special-clients')">
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg> Special Clients
+        </div>
       </nav>
 
       <div class="p-4 border-t border-slate-100">
@@ -948,7 +962,9 @@
       emails: { label: 'Active Emails', default: false }, templates: { label: 'Templates', default: true },
       images: { label: 'Images', default: true }, delete: { label: 'Delete Entries', default: false },
       edit: { label: 'Edit Entries', default: true }, sendEmail: { label: 'Send Emails', default: true },
-      sendWhatsApp: { label: 'Send WhatsApp', default: true }
+      sendWhatsApp: { label: 'Send WhatsApp', default: true },
+      newsletter: { label: 'Newsletter', default: true }, 'content-updates': { label: 'Content Updates', default: true },
+      'uni-students': { label: 'Uni Students', default: true }, 'special-clients': { label: 'Special Clients', default: true }
     };
     function hasPermission(perm) { if (adminRole === 'superadmin' || adminRole === 'standard') return true; if (adminRole === 'crew') return !!crewPermissions[perm]; return true; }
     function applySidebarPermissions() {
@@ -975,7 +991,7 @@
       if (notifications.length > 80) notifications = notifications.slice(0,80);
       updateNotifUI();
       const bell = document.getElementById('notifBell');
-      if (bell) { bell.classList.remove('bell-animate'); void bell.offsetWidth; bell.classList.add('bell-animate'); }
+      if (bell) { bell.classList.remove('bell-animate'); void bell.offsetWidth; bell.classList.add('bellAnimate'); }
     }
     function updateNotifUI() {
       const badge = document.getElementById('notifBadge');
@@ -1008,7 +1024,21 @@
     // EMAIL TEMPLATES
     // ==========================================
     const EMAIL_HTML_TEMPLATE = `<div style="max-width:560px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f;"><div style="padding:32px 32px 0 32px;"><img src="https://i.ibb.co/GQd5q3VM/logo-black-luviio-removebg-preview.png" alt="Luviio" style="height:28px;"></div><div style="padding:28px 32px 32px 32px;"><p style="margin:0 0 20px;font-size:16px;line-height:1.6;">Hi {{recipient_name}},</p><p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#3a3a3c;">{{message}}</p><table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:28px;border:1px solid #e5e5ea;border-radius:10px;overflow:hidden;"><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Service Name</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{service_name}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Action By</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{renewed_by}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Requested By</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{requested_by}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;">Date</td><td style="padding:12px 16px;color:#1d1d1f;">{{renewal_date}}</td></tr></table><p style="margin:28px 0 0;font-size:16px;line-height:1.6;">Take care,<br>We'luviio</p></div><div style="padding:0 32px 32px 32px;"><div style="border-top:1px solid #e5e5ea;padding-top:20px;"><p style="margin:0;font-size:12px;color:#aeaeb2;line-height:1.5;">© 2026 luviio.com</p></div></div></div>`;
-    const WA_TEXT_TEMPLATE = `*{{title}}*\n\nDear {{recipient_name}},\n\n{{message}}\n\n📋 *Details:*\n• Service: {{service_name}}\n• Action By: {{renewed_by}}\n• Requested By: {{requested_by}}\n• Date: {{renewal_date}}\n\nBest regards,\n*Luviio Team*\n© ${new Date().getFullYear()} Luviio`;
+    const WA_TEXT_TEMPLATE = `*{{title}}*
+
+Dear {{recipient_name}},
+
+{{message}}
+
+📋 *Details:*
+• Service: {{service_name}}
+• Action By: {{renewed_by}}
+• Requested By: {{requested_by}}
+• Date: {{renewal_date}}
+
+Best regards,
+*Luviio Team*
+© ${new Date().getFullYear()} Luviio`;
 
     const MESSAGE_TEMPLATES = [
       { id: 'sub-expiring', name: 'Subscription Expiring Soon', icon: '⏰', emailTitle: 'Subscription Expiring Soon', emailMessage: 'Your subscription is expiring soon. Please renew to continue enjoying uninterrupted service.', waMessage: 'Your subscription is expiring soon. Please renew to continue enjoying uninterrupted service.', category: 'Subscription' },
@@ -1188,13 +1218,13 @@
     // NAVIGATION
     // ==========================================
     function navigateTo(page) {
-      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images'].includes(p)); if (f) showPage(f); showToast('No access.','warning'); return; }
+      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images','newsletter','content-updates','uni-students','special-clients'].includes(p)); if (f) showPage(f); showToast('No access.','warning'); return; }
       currentPage = page;
       window.history.pushState({page}, '', `/admin/${page}`);
       showPage(page);
     }
     function showPage(page) {
-      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images'].includes(p)); if (f) page = f; else page = 'dashboard'; }
+      if (!hasPermission(page)) { const f = Object.keys(ALL_PERMISSIONS).find(p => hasPermission(p) && ['dashboard','clients','subscriptions','requests','invoices','feedback','expenses','company-subs','team','crew','emails','templates','images','newsletter','content-updates','uni-students','special-clients'].includes(p)); if (f) page = f; else page = 'dashboard'; }
       currentPage = page;
       const content = document.getElementById('pageContent');
       const title = document.getElementById('pageTitle');
@@ -1203,10 +1233,10 @@
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('sidebarOverlay').classList.add('hidden');
       document.getElementById('notifDropdown').classList.remove('show');
-      const titles = { 'dashboard':'Dashboard','clients':'Client Management','subscriptions':'Active Subscriptions','requests':'Client Requests','invoices':'Invoices & Cashbills','feedback':'Feedback & Complaints','expenses':'Company Expenses','company-subs':'Company Subscriptions','team':'Team Members','crew':'Crew Management','emails':'Active Email Accounts','templates':'Message Templates','images':'Image Manager' };
+      const titles = { 'dashboard':'Dashboard','clients':'Client Management','subscriptions':'Active Subscriptions','requests':'Client Requests','invoices':'Invoices & Cashbills','feedback':'Feedback & Complaints','expenses':'Company Expenses','company-subs':'Company Subscriptions','team':'Team Members','crew':'Crew Management','emails':'Active Email Accounts','templates':'Message Templates','images':'Image Manager','newsletter':'Newsletter Subscribers','content-updates':'Content Update Requests','uni-students':'Uni Student Applications','special-clients':'Special Client Applications' };
       title.textContent = titles[page] || page;
       content.innerHTML = '<div class="flex items-center justify-center h-64"><div class="spinner" style="width:32px;height:32px;border-width:3px;"></div></div>';
-      setTimeout(() => { switch(page) { case 'dashboard': renderDashboard(); break; case 'clients': renderClients(); break; case 'subscriptions': renderSubscriptions(); break; case 'requests': renderRequests(); break; case 'invoices': renderInvoices(); break; case 'feedback': renderFeedback(); break; case 'expenses': renderExpenses(); break; case 'company-subs': renderCompanySubs(); break; case 'team': renderTeam(); break; case 'crew': renderCrew(); break; case 'emails': renderEmails(); break; case 'templates': renderTemplates(); break; case 'images': renderImages(); break; default: renderDashboard(); } }, 300);
+      setTimeout(() => { switch(page) { case 'dashboard': renderDashboard(); break; case 'clients': renderClients(); break; case 'subscriptions': renderSubscriptions(); break; case 'requests': renderRequests(); break; case 'invoices': renderInvoices(); break; case 'feedback': renderFeedback(); break; case 'expenses': renderExpenses(); break; case 'company-subs': renderCompanySubs(); break; case 'team': renderTeam(); break; case 'crew': renderCrew(); break; case 'emails': renderEmails(); break; case 'templates': renderTemplates(); break; case 'images': renderImages(); break; case 'newsletter': renderNewsletter(); break; case 'content-updates': renderContentUpdates(); break; case 'uni-students': renderUniStudents(); break; case 'special-clients': renderSpecialClients(); break; default: renderDashboard(); } }, 300);
     }
     window.addEventListener('popstate', e => { if(currentUser && e.state?.page) showPage(e.state.page); else if(currentUser) showPage(window.location.pathname.replace('/admin/','')||'dashboard'); });
     function toggleSidebar() { const sb = document.getElementById('sidebar'); if (sb.classList.contains('hidden-sidebar')) return; sb.classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
@@ -1218,10 +1248,14 @@
     async function renderDashboard() {
       const content = document.getElementById('pageContent');
       try {
-        const [clientsSnap, subsSnap, expensesSnap, requestsSnap, invoicesSnap, compSubsSnap] = await Promise.all([
+        const [clientsSnap, subsSnap, expensesSnap, requestsSnap, invoicesSnap, compSubsSnap, newsletterSnap, contentUpdatesSnap, uniStudentsSnap, specialClientsSnap] = await Promise.all([
           db.collection('clients').get(), db.collection('subscriptions').where('status','==','active').get(),
           db.collection('expenses').get(), db.collection('client_requests').orderBy('createdAt','desc').limit(5).get(),
-          db.collection('invoices').orderBy('createdAt','desc').limit(5).get(), db.collection('company_subscriptions').get()
+          db.collection('invoices').orderBy('createdAt','desc').limit(5).get(), db.collection('company_subscriptions').get(),
+          db.collection('newsletter_subscribers').orderBy('createdAt','desc').limit(5).get(),
+          db.collection('content_updates').orderBy('createdAt','desc').limit(5).get(),
+          db.collection('uni_student_applications').orderBy('createdAt','desc').limit(5).get(),
+          db.collection('special_client_applications').orderBy('createdAt','desc').limit(5).get()
         ]);
         let totalIncome=0, totalExpenses=0, totalCompSubs=0;
         invoicesSnap.forEach(d => { if(d.data().status==='paid') totalIncome+=parseFloat(d.data().amount||0); });
@@ -1233,7 +1267,7 @@
         expiringSubs.sort((a,b) => a.days - b.days);
         let alertBarHTML = '';
         if (expiringSubs.length > 0) {
-          alertBarHTML = `<div class="expiry-alert-bar"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-5 h-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><div class="flex-1"><h4 class="font-semibold text-sm text-yellow-800">Company Subscriptions Expiring Soon</h4><div class="mt-2 space-y-1.5">${expiringSubs.map(s => `<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white/60 rounded-lg px-3 py-2"><div class="flex items-center gap-2"><span class="font-medium text-sm text-slate-800">${s.serviceName}</span><span class="badge ${s.days<=0?'badge-danger':s.days<=3?'badge-danger':'badge-orange'}">${s.days<=0?'EXPIRED':s.days+'d left'}</span><span class="text-xs text-slate-500">${formatDate(s.renewalDate)}</span></div><div class="flex gap-2"><button onclick="sendCompanySubReminder('${s.id}')" class="notif-action-btn notif-action-btn-primary">📧 Reminder</button><button onclick="renewCompanySubWithNotif('${s.id}')" class="notif-action-btn notif-action-btn-secondary">🔄 Renew</button></div></div>`).join('')}</div></div></div></div>`;
+          alertBarHTML = `<div class="expiry-alert-bar"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0 mt-0.5"><svg class="w-5 h-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><div class="flex-1"><h4 class="font-semibold text-sm text-yellow-800">Company Subscriptions Expiring Soon</h4><div class="mt-2 space-y-1.5">${expiringSubs.map(s => `<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white/60 rounded-lg px-3 py-2"><div class="flex items-center gap-2"><span class="font-medium text-sm text-slate-800">${s.serviceName}</span><span class="badge ${s.days<=0?'badge-danger':s.days<=3?'badge-danger':'badge-orange'}">${s.days<=0?'EXPIRED':s.days+'d left'}</span><span class="text-xs text-slate-500">${formatDate(s.renewalDate)}</span></div><div class="flex gap-2"><button onclick="sendCompanySubReminder('${s.id}')" class="notif-action-btn notif-action-btn-primary">📧 Reminder</button><button onclick="renewCompanySubWithNotif('${s.id}')" class="notif-action-btn notif-action-btn-secondary">🔄 Renew</button></div></div>`).join('')}</div></div></div>`;
         }
         content.innerHTML = `<div class="animate-in space-y-6">${alertBarHTML}
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -1248,6 +1282,43 @@
             <div class="content-card p-6"><h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Quick Actions</h3><div class="space-y-2">${hasPermission('edit') && hasPermission('clients') ? `<button onclick="openModal('addClient')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>Add New Client</button>` : ''}${hasPermission('edit') && hasPermission('expenses') ? `<button onclick="openModal('addExpense')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Log Expense</button>` : ''}${hasPermission('edit') && hasPermission('invoices') ? `<button onclick="openModal('addInvoice')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Create Invoice</button>` : ''}${(hasPermission('sendEmail')||hasPermission('sendWhatsApp')) ? `<button onclick="openQuickSendNotif()" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Send Notification</button>` : ''}</div></div>
             <div class="lg:col-span-2 content-card"><div class="p-5 border-b border-slate-100 flex items-center justify-between"><h3 class="font-semibold text-slate-800 text-sm">Recent Invoices</h3>${hasPermission('invoices') ? `<button onclick="navigateTo('invoices')" class="text-xs text-pink-600 font-medium hover:underline">View All</button>` : ''}</div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Remarks</th></tr></thead><tbody>${invoicesSnap.docs.length===0?'<tr><td colspan="5" class="text-center text-slate-400 py-8">No invoices yet</td></tr>':invoicesSnap.docs.map(doc=>{const d=doc.data();return`<tr><td class="font-mono text-xs">#${doc.id.slice(0,8)}</td><td>${d.clientName||'-'}</td><td class="font-medium">RM${parseFloat(d.amount||0).toLocaleString()}</td><td>${getStatusBadge(d.status)}</td><td>${remarksCell(d.remarks)}</td></tr>`;}).join('')}</tbody></table></div></div>
           </div>
+          
+          <!-- Website Forms Summary -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="content-card p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="navigateTo('newsletter')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Newsletter</span>
+                <svg class="w-4 h-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <p class="text-2xl font-bold text-slate-800">${newsletterSnap.size}</p>
+              <p class="text-xs text-slate-400 mt-1">Subscribers</p>
+            </div>
+            <div class="content-card p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="navigateTo('content-updates')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Content Updates</span>
+                <svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </div>
+              <p class="text-2xl font-bold text-slate-800">${contentUpdatesSnap.size}</p>
+              <p class="text-xs text-slate-400 mt-1">Requests</p>
+            </div>
+            <div class="content-card p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="navigateTo('uni-students')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Uni Students</span>
+                <svg class="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+              </div>
+              <p class="text-2xl font-bold text-slate-800">${uniStudentsSnap.size}</p>
+              <p class="text-xs text-slate-400 mt-1">Applications</p>
+            </div>
+            <div class="content-card p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="navigateTo('special-clients')">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase">Special Clients</span>
+                <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              </div>
+              <p class="text-2xl font-bold text-slate-800">${specialClientsSnap.size}</p>
+              <p class="text-xs text-slate-400 mt-1">Applications</p>
+            </div>
+          </div>
+
           <div class="content-card"><div class="p-5 border-b border-slate-100 flex items-center justify-between"><h3 class="font-semibold text-slate-800 text-sm">Recent Client Requests</h3>${hasPermission('requests') ? `<button onclick="navigateTo('requests')" class="text-xs text-pink-600 font-medium hover:underline">View All</button>` : ''}</div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Type</th><th>Client</th><th>Date</th><th>Status</th><th>Remarks</th></tr></thead><tbody>${requestsSnap.docs.length===0?'<tr><td colspan="5" class="text-center text-slate-400 py-8">No requests yet</td></tr>':requestsSnap.docs.map(doc=>{const d=doc.data();return`<tr><td><span class="badge badge-neutral">${d.type||'Update'}</span></td><td>${d.clientName||d.name||'-'}</td><td class="text-xs text-slate-500">${formatDate(d.createdAt)}</td><td>${getStatusBadge(d.status||'pending')}</td><td>${remarksCell(d.remarks)}</td></tr>`;}).join('')}</tbody></table></div></div>
         </div>`;
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p><button onclick="renderDashboard()" class="btn-primary mt-4">Retry</button></div>`; }
@@ -1335,7 +1406,7 @@
       const content = document.getElementById('pageContent');
       try {
         const snap = await db.collection('feedback').orderBy('createdAt','desc').get();
-        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">Feedback & Complaints</h3></div>${hasPermission('edit')?`<button onclick="openModal('addFeedback')" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Log Feedback</button>`:''}</div><div class="grid gap-4">${snap.docs.length===0?'<div class="content-card p-12 text-center text-slate-400">No feedback recorded</div>':snap.docs.map(doc=>{const f=doc.data();const ic=f.type==='complaint';return`<div class="content-card p-5 ${ic?'border-l-4 border-l-red-400':'border-l-4 border-l-blue-400'}"><div class="flex items-start justify-between gap-4"><div class="flex-1"><div class="flex items-center gap-2 mb-2"><span class="badge ${ic?'badge-danger':'badge-info'}">${ic?'Complaint':'Feedback'}</span>${getStatusBadge(f.status||'new')}<span class="text-xs text-slate-400">${formatDate(f.createdAt)}</span></div><p class="font-medium text-sm text-slate-800 mb-1">${f.subject||f.clientName||'No subject'}</p><p class="text-sm text-slate-600 leading-relaxed">${f.message||f.content||'-'}</p>${f.resolution?`<div class="mt-2 p-3 bg-green-50 rounded-lg text-xs text-green-700"><strong>Resolution:</strong> ${f.resolution}</div>`:''}<div class="mt-2">${remarksCell(f.remarks)}</div><div class="flex flex-wrap gap-4 mt-2 text-xs text-slate-400"><span>${f.clientName||'-'}</span></div></div><div class="flex gap-2">${f.status!=='resolved'?`<button onclick="resolveFeedbackWithNotif('${doc.id}')" class="btn-secondary !py-2 !px-3 !text-xs !text-green-600">Resolve</button>`:''}${deleteBtnHTML('feedback',doc.id,'feedback')}</div></div></div>`;}).join('')}</div></div>`;
+        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">Feedback & Complaints</h3></div>${hasPermission('edit')?`<button onclick="openModal('addFeedback')" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Log Feedback</button>`:''}</div><div class="grid gap-4">${snap.docs.length===0?'<div class="content-card p-12 text-center text-slate-400">No feedback recorded</div>':snap.docs.map(doc=>{const f=doc.data();const ic=f.type==='complaint';return`<div class="content-card p-5 ${ic?'border-l-4 border-l-red-400':'border-l-4 border-l-blue-400'}"><div class="flex items-start justify-between gap-4"><div class="flex-1"><div class="flex items-center gap-2 mb-2"><span class="badge ${ic?'badge-danger':'badge-info'}">${ic?'Complaint':'Feedback'}</span>${getStatusBadge(f.status||'new')}<span class="text-xs text-slate-400">${formatDate(f.createdAt)}</span></div><p class="font-medium text-sm text-slate-800 mb-1">${f.subject||f.clientName||'No subject'}</p><p class="text-sm text-slate-600 leading-relaxed">${f.message||f.content||'-'}</p>${f.resolution?`<div class="mt-2 p-3 bg-green-50 rounded-lg text-xs text-green-700"><strong>Resolution:</strong> ${f.resolution}</div>`:''}<div class="mt-2">${remarksCell(f.remarks)}</div><div class="mt-2 flex flex-wrap gap-4 text-xs text-slate-400"><span>${f.clientName||'-'}</span></div></div><div class="flex gap-2">${f.status!=='resolved'?`<button onclick="resolveFeedbackWithNotif('${doc.id}')" class="btn-secondary !py-2 !px-3 !text-xs !text-green-600">Resolve</button>`:''}${deleteBtnHTML('feedback',doc.id,'feedback')}</div></div></div>`;}).join('')}</div></div>`;
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
     async function resolveFeedbackWithNotif(id) { const doc=await db.collection('feedback').doc(id).get(); const f=doc.data(); const client=findClientByName(f.clientName); const resolution=prompt('Enter resolution details:'); if(!resolution) return; openCustomerNotif({ clientEmail:client?.email||'', clientName:f.clientName||'', clientPhone:client?.phone||'', defaultTitle:'Your Feedback Has Been Addressed', defaultMessage:`We have reviewed your ${f.type==='complaint'?'complaint':'feedback'} regarding "${f.subject||'your concern'}" and have taken the following action: ${resolution}`, serviceName:f.type==='complaint'?'Complaint Resolution':'Feedback Response', renewedBy:'Luviio Support', requestedBy:f.clientName||'-', relevantDate:formatDate(new Date()), onSuccess: async()=>{ try{await db.collection('feedback').doc(id).update({status:'resolved',resolution});renderFeedback();showToast('Feedback resolved!');}catch(err){showToast('Error','error');} } }); }
@@ -1394,7 +1465,7 @@
       const content = document.getElementById('pageContent');
       try {
         const snap = await db.collection('company_emails').orderBy('addedAt','desc').get();
-        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">Active Email Accounts</h3></div>${hasPermission('edit')?`<button onclick="openModal('addEmail')" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Add Email</button>`:''}</div><div class="content-card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Email</th><th>Purpose</th><th>Password</th><th>Owner</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead><tbody>${snap.docs.length===0?'<tr><td colspan="7" class="text-center text-slate-400 py-12">No emails</td></tr>':snap.docs.map(doc=>{const em=doc.data();return`<tr><td class="font-mono text-sm font-medium">${em.email||'-'}</td><td class="text-sm">${em.purpose||'-'}</td><td><div class="flex items-center gap-2"><code class="text-xs bg-slate-100 px-2 py-1 rounded">${em.password?'********':'-'}</code>${em.password?`<button onclick="copyToClipboard('${em.password.replace(/'/g,"\\'")}')" class="text-pink-600 hover:text-pink-700"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>`:''}</div></td><td class="text-sm">${em.owner||'-'}</td><td>${getStatusBadge(em.status||'active')}</td><td>${remarksCell(em.remarks)}</td><td><div class="flex gap-1">${editBtnHTML('editEmail',doc.id)}${deleteBtnHTML('company_emails',doc.id,'email')}</div></td></tr>`;}).join('')}</tbody></table></div></div></div>`;
+        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">Active Email Accounts</h3></div>${hasPermission('edit')?`<button onclick="openModal('addEmail')" class="btn-primary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Add Email</button>`:''}</div><div class="content-card overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>Email</th><th>Purpose</th><th>Password</th><th>Owner</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead><tbody>${snap.docs.length===0?'<tr><td colspan="7" class="text-center text-slate-400 py-12">No emails</td></tr>':snap.docs.map(doc=>{const em=doc.data();return`<tr><td class="font-mono text-sm font-medium">${em.email||'-'}</td><td class="text-sm">${em.purpose||'-'}</td><td><div class="flex items-center gap-2"><code class="text-xs bg-slate-100 px-2 py-1 rounded">${em.password?'********':'-'}</code>${em.password?`<button onclick="copyToClipboard('${em.password.replace(/'/g,"\'")}')" class="text-pink-600 hover:text-pink-700"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>`:''}</div></td><td class="text-sm">${em.owner||'-'}</td><td>${getStatusBadge(em.status||'active')}</td><td>${remarksCell(em.remarks)}</td><td><div class="flex gap-1">${editBtnHTML('editEmail',doc.id)}${deleteBtnHTML('company_emails',doc.id,'email')}</div></td></tr>`;}).join('')}</tbody></table></div></div></div>`;
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
 
@@ -1652,7 +1723,7 @@
       renderImages();
     }
 
-        async function isImageNameTaken(name) {
+    async function isImageNameTaken(name) {
       if (!name || !name.trim()) return false;
       const snap = await db.collection('uploaded_images').where('imageName', '==', name.trim()).limit(1).get();
       return !snap.empty;
@@ -1785,6 +1856,427 @@
       document.getElementById('previewImage').src = '';
       document.body.style.overflow = '';
       galleryImages = [];
+    }
+
+    // ==========================================
+    // NEWSLETTER SUBSCRIBERS
+    // ==========================================
+    async function renderNewsletter() {
+      const content = document.getElementById('pageContent');
+      try {
+        const snap = await db.collection('newsletter_subscribers').orderBy('createdAt','desc').get();
+        content.innerHTML = `<div class="animate-in space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-semibold text-slate-800 text-lg">Newsletter Subscribers (${snap.size})</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Email addresses collected from the website newsletter form</p>
+            </div>
+            <div class="flex gap-2">
+              <div class="search-container relative">
+                <input type="text" id="newsletterSearch" placeholder="Search email..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'newsletterTableBody', 'email')" autocomplete="off">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              ${hasPermission('delete') ? `<button onclick="exportCollection('newsletter_subscribers', 'newsletter-subscribers.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
+            </div>
+          </div>
+          <div class="content-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Email Address</th><th>Source</th><th>Subscribed On</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="newsletterTableBody">
+                  ${snap.docs.length === 0 
+                    ? '<tr><td colspan="4" class="text-center text-slate-400 py-12">No subscribers yet</td></tr>'
+                    : snap.docs.map(doc => {
+                        const d = doc.data();
+                        return `<tr data-search="${(d.email||'').toLowerCase()}">
+                          <td class="font-medium text-sm text-pink-600">${d.email || '-'}</td>
+                          <td class="text-xs text-slate-500 max-w-[250px] truncate" title="${d.source || '-'}">${d.source ? new URL(d.source).hostname : '-'}</td>
+                          <td class="text-xs text-slate-500">${formatDate(d.createdAt)}</td>
+                          <td>
+                            <div class="flex gap-1">
+                              ${(hasPermission('sendEmail')) ? `<button onclick="sendNewsletterEmail('${d.email}')" class="p-1.5 rounded-lg hover:bg-green-50 text-slate-500 hover:text-green-600" title="Send Email"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>` : ''}
+                              ${deleteBtnHTML('newsletter_subscribers', doc.id, 'subscriber')}
+                            </div>
+                          </td>
+                        </tr>`;
+                      }).join('')
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+      } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
+    }
+    
+    async function sendNewsletterEmail(email) {
+      openCustomerNotif({
+        clientEmail: email,
+        clientName: 'Newsletter Subscriber',
+        clientPhone: '',
+        defaultTitle: '',
+        defaultMessage: '',
+        serviceName: 'Luviio Newsletter',
+        renewedBy: 'Luviio Marketing',
+        requestedBy: 'Website Form',
+        relevantDate: formatDate(new Date())
+      });
+    }
+
+    // ==========================================
+    // CONTENT UPDATES
+    // ==========================================
+    async function renderContentUpdates() {
+      const content = document.getElementById('pageContent');
+      try {
+        const snap = await db.collection('content_updates').orderBy('createdAt','desc').get();
+        content.innerHTML = `<div class="animate-in space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-semibold text-slate-800 text-lg">Content Update Requests (${snap.size})</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Text, images, and branding change requests from the website</p>
+            </div>
+            <div class="flex gap-2">
+              <div class="search-container relative">
+                <input type="text" id="cuSearch" placeholder="Search by name or email..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'cuTableBody', ['name','email'])" autocomplete="off">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              <div class="flex gap-1 bg-white rounded-xl p-1 border border-slate-200">
+                <button class="tab-btn active" onclick="filterCU('all', this)">All</button>
+                <button class="tab-btn" onclick="filterCU('Normal', this)">Normal</button>
+                <button class="tab-btn" onclick="filterCU('Urgent', this)">Urgent</button>
+                <button class="tab-btn" onclick="filterCU('Critical', this)">Critical</button>
+              </div>
+            </div>
+          </div>
+          <div id="cuList" class="space-y-4">
+            ${snap.docs.length === 0 
+              ? '<div class="content-card p-12 text-center text-slate-400">No content update requests</div>'
+              : snap.docs.map(doc => {
+                  const d = doc.data();
+                  const images = (d.imageUrls || '').split(',').filter(u => u.trim());
+                  return `<div class="content-card p-5 cu-item" data-priority="${d.priority || 'Normal'}" data-search="${((d.name||'')+' '+(d.email||'')).toLowerCase()}">
+                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                          <span class="font-medium text-sm text-slate-800">${d.name || '-'}</span>
+                          <span class="text-xs text-slate-500">${d.email || '-'}</span>
+                          <span class="badge ${d.priority === 'Critical' ? 'badge-danger' : d.priority === 'Urgent' ? 'badge-warning' : 'badge-info'}">${d.priority || 'Normal'}</span>
+                          <span class="text-xs text-slate-400">${formatDate(d.createdAt)}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 mb-2">
+                          ${(d.types || []).map(t => `<span class="badge badge-neutral text-[10px]">${t}</span>`).join('')}
+                          ${d.section ? `<span class="badge badge-purple text-[10px]">${d.section}</span>` : ''}
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-2">${d.details || '-'}</p>
+                        ${images.length > 0 ? `
+                          <div class="flex gap-2 flex-wrap mt-1">
+                            ${images.slice(0, 4).map(url => `
+                              <img src="${url}" class="w-16 h-16 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity border border-slate-200" onclick="openGalleryPreview([${JSON.stringify(images)}], ${images.indexOf(url)})" alt="Attachment" loading="lazy" onerror="this.style.display='none'">
+                            `).join('')}
+                            ${images.length > 4 ? `<span class="text-xs text-slate-400 self-center">+${images.length - 4} more</span>` : ''}
+                          </div>
+                        ` : ''}
+                        <div class="text-xs text-slate-400 mt-2">
+                          Source: ${d.source ? `<a href="${d.source}" target="_blank" class="text-pink-600 hover:underline">${new URL(d.source).pathname}</a>` : '-'}
+                          ${d.whatsapp ? `· WA: ${d.whatsapp}` : ''}
+                          ${d.website ? `· Site: ${d.website}` : ''}
+                        </div>
+                      </div>
+                      <div class="flex gap-2 flex-shrink-0">
+                        ${(hasPermission('sendEmail') || hasPermission('sendWhatsApp')) ? `
+                          <button onclick="sendCUNotification('${doc.id}')" class="btn-secondary !py-2 !px-3 !text-xs">Notify</button>
+                        ` : ''}
+                        ${deleteRowBtnHTML('content_updates', doc.id, 'request')}
+                      </div>
+                    </div>
+                  </div>`;
+                }).join('')
+            }
+          </div>
+        </div>`;
+      } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
+    }
+
+    function filterCU(priority, btn) {
+      document.querySelectorAll('.cu-item').forEach(item => {
+        item.style.display = (priority === 'all' || item.dataset.priority === priority) ? '' : 'none';
+      });
+      btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    async function sendCUNotification(id) {
+      const doc = await db.collection('content_updates').doc(id).get();
+      const d = doc.data();
+      openCustomerNotif({
+        clientEmail: d.email || '',
+        clientName: d.name || 'Client',
+        clientPhone: d.whatsapp || '',
+        defaultTitle: `Content Update: ${d.types?.join(', ') || 'Request'}`,
+        defaultMessage: `Hi ${d.name || 'there'},
+
+We've received your content update request regarding "${d.section || 'your website'}". Our team will review it shortly.
+
+Details: ${d.details || '-'}
+
+Thank you!`,
+        serviceName: 'Content Update Request',
+        renewedBy: 'Luviio Content Team',
+        requestedBy: d.name || 'Website Visitor',
+        relevantDate: formatDate(d.createdAt),
+        onSuccess: () => {
+          addNotification('Notification Sent', `Content update notification sent to ${d.name || d.email}`, 'success');
+        }
+      });
+    }
+
+    // ==========================================
+    // UNI STUDENT APPLICATIONS
+    // ==========================================
+    async function renderUniStudents() {
+      const content = document.getElementById('pageContent');
+      try {
+        const snap = await db.collection('uni_student_applications').orderBy('createdAt','desc').get();
+        content.innerHTML = `<div class="animate-in space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-semibold text-slate-800 text-lg">University Student Applications (${snap.size})</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Student program applications with university verification</p>
+            </div>
+            <div class="flex gap-2">
+              <div class="search-container relative">
+                <input type="text" id="uniSearch" placeholder="Search by name, IC, uni..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'uniTableBody', ['fullName','icNumber','university','studentEmail'])" autocomplete="off">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              ${hasPermission('delete') ? `<button onclick="exportCollection('uni_student_applications', 'uni-students.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
+            </div>
+          </div>
+          <div class="content-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Name</th><th>IC Number</th><th>Student ID</th><th>University</th><th>Email</th><th>Phone</th><th>Business Type</th><th>Applied</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="uniTableBody">
+                  ${snap.docs.length === 0 
+                    ? '<tr><td colspan="9" class="text-center text-slate-400 py-12">No applications yet</td></tr>'
+                    : snap.docs.map(doc => {
+                        const d = doc.data();
+                        return `<tr data-search="${((d.fullName||'')+' '+(d.icNumber||'')+' '+(d.university||'')+' '+(d.studentEmail||'')).toLowerCase()}">
+                          <td class="font-medium text-sm">${d.fullName || '-'}</td>
+                          <td class="text-sm font-mono">${d.icNumber || '-'}</td>
+                          <td class="text-sm">${d.studentId || '-'}</td>
+                          <td><span class="badge badge-info">${d.university || '-'}</span></td>
+                          <td class="text-sm text-slate-600">${d.studentEmail || '-'}</td>
+                          <td class="text-sm">${d.phone || '-'}</td>
+                          <td><span class="badge badge-neutral">${d.businessType || '-'}</span></td>
+                          <td class="text-xs text-slate-500">${formatDate(d.createdAt)}</td>
+                          <td>
+                            <div class="flex gap-1">
+                              ${(hasPermission('sendEmail') || hasPermission('sendWhatsApp')) ? `
+                                <button onclick="sendUniNotif('${doc.id}')" class="p-1.5 rounded-lg hover:bg-green-50 text-slate-500 hover:text-green-600" title="Contact"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>
+                              ` : ''}
+                              ${deleteBtnHTML('uni_student_applications', doc.id, 'application')}
+                            </div>
+                          </td>
+                        </tr>`;
+                      }).join('')
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+      } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
+    }
+
+    async function sendUniNotif(id) {
+      const doc = await db.collection('uni_student_applications').doc(id).get();
+      const d = doc.data();
+      openCustomerNotif({
+        clientEmail: d.studentEmail || '',
+        clientName: d.fullName || 'Student',
+        clientPhone: d.phone || '',
+        defaultTitle: 'University Student Program - Application Received',
+        defaultMessage: `Dear ${d.fullName},
+
+Thank you for applying to the Luviio University Student Program!
+
+Application Details:
+• University: ${d.university || '-'}
+• Student ID: ${d.studentId || '-'}
+• IC: ${d.icNumber || '-'}
+• Business Type: ${d.businessType || '-'}
+
+Our team will review your application and get back to you soon.
+
+Best regards,
+Luviio Team`,
+        serviceName: 'Uni Student Program',
+        renewedBy: 'Luviio Uni Program',
+        requestedBy: d.fullName || 'Student',
+        relevantDate: formatDate(d.createdAt)
+      });
+    }
+
+    // ==========================================
+    // SPECIAL CLIENT APPLICATIONS
+    // ==========================================
+    async function renderSpecialClients() {
+      const content = document.getElementById('pageContent');
+      try {
+        const snap = await db.collection('special_client_applications').orderBy('createdAt','desc').get();
+        content.innerHTML = `<div class="animate-in space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-semibold text-slate-800 text-lg">Special Client Applications (${snap.size})</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Invited-only clients with 30-day free trial applications</p>
+            </div>
+            <div class="flex gap-2">
+              <div class="search-container relative">
+                <input type="text" id="scSearch" placeholder="Search by name, company..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'scTableBody', ['name','email','company'])" autocomplete="off">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </div>
+              ${hasPermission('delete') ? `<button onclick="exportCollection('special_client_applications', 'special-clients.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
+            </div>
+          </div>
+          <div class="content-card overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Message</th><th>Applied</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="scTableBody">
+                  ${snap.docs.length === 0 
+                    ? '<tr><td colspan="7" class="text-center text-slate-400 py-12">No special client applications yet</td></tr>'
+                    : snap.docs.map(doc => {
+                        const d = doc.data();
+                        return `<tr data-search="${((d.name||'')+' '+(d.company||'')+' '+(d.email||'')).toLowerCase()}">
+                          <td class="font-medium text-sm">${d.name || '-'}</td>
+                          <td class="text-sm">${d.company || '-'}</td>
+                          <td class="text-sm text-slate-600">${d.email || '-'}</td>
+                          <td class="text-sm">${d.phone || '-'}</td>
+                          <td class="text-sm text-slate-600 max-w-[200px] truncate" title="${d.message || '-'}">${d.message || '-'}</td>
+                          <td class="text-xs text-slate-500">${formatDate(d.createdAt)}</td>
+                          <td>
+                            <div class="flex gap-1">
+                              ${(hasPermission('sendEmail') || hasPermission('sendWhatsApp')) ? `
+                                <button onclick="sendSCNotif('${doc.id}')" class="p-1.5 rounded-lg hover:bg-green-50 text-slate-500 hover:text-green-600" title="Contact"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>
+                              ` : ''}
+                              ${deleteBtnHTML('special_client_applications', doc.id, 'application')}
+                            </div>
+                          </td>
+                        </tr>`;
+                      }).join('')
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+      } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
+    }
+
+    async function sendSCNotif(id) {
+      const doc = await db.collection('special_client_applications').doc(id).get();
+      const d = doc.data();
+      openCustomerNotif({
+        clientEmail: d.email || '',
+        clientName: d.name || 'Special Client',
+        clientPhone: d.phone || '',
+        defaultTitle: 'Welcome to Luviio - Special Client Program',
+        defaultMessage: `Dear ${d.name},
+
+Thank you for your interest in Luviio's Special Client Program!
+
+We're excited to offer you a **30-day free trial** of our premium services.
+
+Your Message:
+"${d.message || '-'}"
+
+Our team will reach out shortly to get you started.
+
+Best regards,
+Luviio Team`,
+        serviceName: 'Special Client Program (30-Day Trial)',
+        renewedBy: 'Luviio Sales',
+        requestedBy: d.name || 'Special Client',
+        relevantDate: formatDate(d.createdAt)
+      });
+    }
+
+    // ==========================================
+    // TABLE SEARCH UTILITY (for new pages)
+    // ==========================================
+    function handleTableSearch(query, tableBodyId, searchFields) {
+      const tbody = document.getElementById(tableBodyId);
+      if (!tbody) return;
+      const rows = tbody.querySelectorAll('tr');
+      if (!query || query.length < 1) {
+        rows.forEach(r => r.classList.remove('hidden-row'));
+        return;
+      }
+      const q = query.toLowerCase().trim();
+      rows.forEach(row => {
+        let match = false;
+        if (Array.isArray(searchFields)) {
+          searchFields.forEach(field => {
+            const cell = row.querySelector(`td:nth-child(${getFieldIndex(field, tableBodyId)})`);
+            if (cell && cell.textContent.toLowerCase().includes(q)) match = true;
+          });
+        } else {
+          if ((row.dataset.search || '').includes(q)) match = true;
+        }
+        row.classList.toggle('hidden-row', !match);
+      });
+    }
+
+    function getFieldIndex(fieldName, tableBodyId) {
+      // Simple mapping based on common patterns
+      const maps = {
+        'newsletterTableBody': { email: 1 },
+        'cuTableBody': { name: 1, email: 2 },
+        'uniTableBody': { fullName: 1, icNumber: 2, studentId: 3, university: 4, studentEmail: 5 },
+        'scTableBody': { name: 1, company: 2, email: 3 }
+      };
+      return maps[tableBodyId]?.[fieldName] || 1;
+    }
+
+    // ==========================================
+    // EXPORT TO CSV
+    // ==========================================
+    async function exportCollection(collectionName, filename) {
+      try {
+        const snap = await db.collection(collectionName).get();
+        if (snap.empty) { showToast('No data to export', 'warning'); return; }
+        
+        const headers = Object.keys(snap.docs[0].data());
+        let csv = headers.join(',') + '';
+        
+        snap.docs.forEach(doc => {
+          const d = doc.data();
+          csv += headers.map(h => {
+            let val = d[h];
+            if (val === undefined || val === null) val = '';
+            if (typeof val === 'object') val = JSON.stringify(val);
+            return `"${String(val).replace(/"/g, '""')}"`;
+          }).join(',') + '';
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        
+        showToast(`${snap.size} records exported!`, 'success');
+      } catch(e) {
+        showToast('Export failed: ' + e.message, 'error');
+      }
     }
 
     // ==========================================
@@ -2018,6 +2510,14 @@
         if (e.key === 'ArrowRight') { e.preventDefault(); switchGalleryImage((galleryActiveIdx + 1) % galleryImages.length); }
       }
     });
+
+    // Standard Firestore Save Function for Website Forms
+    async function saveToFirestore(collection, docData) {
+      docData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      docData.source = window.location.href;
+      const docRef = await db.collection(collection).add(docData);
+      return docRef.id;
+    }
   </script>
 </body>
 </html>
