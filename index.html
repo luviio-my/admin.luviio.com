@@ -1090,9 +1090,103 @@ function openGalleryPreview(images, activeIdx) {
     document.addEventListener('click', e => { const c=document.getElementById('notifContainer'); if(c&&!c.contains(e.target)) document.getElementById('notifDropdown').classList.remove('show'); });
 
     // ==========================================
-    // EMAIL TEMPLATES
+    // EMAIL TEMPLATES (Updated - Table-based for EmailJS)
     // ==========================================
-    const EMAIL_HTML_TEMPLATE = `<div style="max-width:560px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f;"><div style="padding:32px 32px 0 32px;"><img src="https://i.ibb.co/GQd5q3VM/logo-black-luviio-removebg-preview.png" alt="Luviio" style="height:28px;"></div><div style="padding:28px 32px 32px 32px;"><p style="margin:0 0 20px;font-size:16px;line-height:1.6;">Hi {{recipient_name}},</p><p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#3a3a3c;">{{message}}</p><table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:28px;border:1px solid #e5e5ea;border-radius:10px;overflow:hidden;"><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Service Name</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{service_name}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Action By</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{renewed_by}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;border-bottom:1px solid #e5e5ea;">Requested By</td><td style="padding:12px 16px;color:#1d1d1f;border-bottom:1px solid #e5e5ea;">{{requested_by}}</td></tr><tr><td style="padding:12px 16px;background:#f5f5f7;color:#86868b;font-weight:600;">Date</td><td style="padding:12px 16px;color:#1d1d1f;">{{renewal_date}}</td></tr></table><p style="margin:28px 0 0;font-size:16px;line-height:1.6;">Take care,<br>We'luviio</p></div><div style="padding:0 32px 32px 32px;"><div style="border-top:1px solid #e5e5ea;padding-top:20px;"><p style="margin:0;font-size:12px;color:#aeaeb2;line-height:1.5;">© 2026 luviio.com</p></div></div></div>`;
+    const EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>{{email_title}}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f7; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f7; padding:20px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Container (Square) -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; padding:40px;">
+
+          <!-- Logo -->
+          <tr>
+            <td style="padding-bottom:30px;">
+              <img src="https://images.luviio.com/luviio-logo-circle-v1.png" alt="Luviio" width="40" height="40" />
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="font-size:18px; color:#1d1d1f; padding-bottom:20px;">
+              Hi {{recipient_name}},
+            </td>
+          </tr>
+
+          <!-- Message -->
+          <tr>
+            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
+              {{message}}
+            </td>
+          </tr>
+
+          <!-- Details -->
+          <tr>
+            <td style="font-size:15px; line-height:1.7; color:#3a3a3c; padding-bottom:25px;">
+
+              <div style="margin-bottom:6px;">
+                <strong style="color:#1d1d1f;">Service:</strong> {{service_name}}
+              </div>
+
+              <div style="margin-bottom:6px;">
+                <strong style="color:#1d1d1f;">Action By:</strong> {{renewed_by}}
+              </div>
+
+              <div style="margin-bottom:6px;">
+                <strong style="color:#1d1d1f;">Requested By:</strong> {{requested_by}}
+              </div>
+
+              <div>
+                <strong style="color:#1d1d1f;">Date:</strong> {{renewal_date}}
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:30px;">
+              To learn more, visit our 
+              <a href="https://luviio.com" style="color:#0071e3; text-decoration:none;">website page</a>.
+            </td>
+          </tr>
+
+          <!-- Signature -->
+          <tr>
+            <td style="font-size:16px; color:#1d1d1f;">
+              Take care,<br/>
+              <strong>We'luviio</strong>
+            </td>
+          </tr>
+
+        </table>
+
+        <!-- Footer -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="padding:20px 40px; color:#86868b; font-size:12px;">
+          <tr>
+            <td style="line-height:1.5;">
+              This email was sent by {{renewed_by}} on behalf of Luviio.<br/><br/>
+              Please do not reply to this message; it was automatically generated.<br/><br/>
+              © 2026 luviio. All rights reserved.
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
+
     const WA_TEXT_TEMPLATE = `*{{title}}*
 
 Dear {{recipient_name}},
@@ -1123,12 +1217,26 @@ Best regards,
     ];
 
     function renderEmailPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
-      return EMAIL_HTML_TEMPLATE.replace(/\{\{recipient_name\}\}/g, recipientName||'Valued Customer').replace(/\{\{title\}\}/g, title||'Notification').replace(/\{\{message\}\}/g, message||'-').replace(/\{\{service_name\}\}/g, serviceName||'-').replace(/\{\{renewed_by\}\}/g, renewedBy||'-').replace(/\{\{requested_by\}\}/g, requestedBy||'-').replace(/\{\{renewal_date\}\}/g, renewalDate||'-');
-    }
-    function renderWaPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
-      return WA_TEXT_TEMPLATE.replace(/\{\{recipient_name\}\}/g, recipientName||'Valued Customer').replace(/\{\{title\}\}/g, title||'Notification').replace(/\{\{message\}\}/g, message||'-').replace(/\{\{service_name\}\}/g, serviceName||'-').replace(/\{\{renewed_by\}\}/g, renewedBy||'-').replace(/\{\{requested_by\}\}/g, requestedBy||'-').replace(/\{\{renewal_date\}\}/g, renewalDate||'-');
+      return EMAIL_HTML_TEMPLATE
+        .replace(/\{\{email_title\}\}/g, title || 'Notification from Luviio')
+        .replace(/\{\{recipient_name\}\}/g, recipientName || 'Valued Customer')
+        .replace(/\{\{message\}\}/g, message ? message.replace(/\n/g, '<br/>') : '-')
+        .replace(/\{\{service_name\}\}/g, serviceName || '-')
+        .replace(/\{\{renewed_by\}\}/g, renewedBy || '-')
+        .replace(/\{\{requested_by\}\}/g, requestedBy || '-')
+        .replace(/\{\{renewal_date\}\}/g, renewalDate || '-');
     }
 
+    function renderWaPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
+      return WA_TEXT_TEMPLATE
+        .replace(/\{\{recipient_name\}\}/g, recipientName || 'Valued Customer')
+        .replace(/\{\{title\}\}/g, title || 'Notification')
+        .replace(/\{\{message\}\}/g, message || '-')
+        .replace(/\{\{service_name\}\}/g, serviceName || '-')
+        .replace(/\{\{renewed_by\}\}/g, renewedBy || '-')
+        .replace(/\{\{requested_by\}\}/g, requestedBy || '-')
+        .replace(/\{\{renewal_date\}\}/g, renewalDate || '-');
+    }
     // ==========================================
     // EMAILJS SEND
     // ==========================================
@@ -2207,17 +2315,16 @@ Thank you!`,
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
 
-    async function sendUniNotif(id) {
-      const doc = await db.collection('uni_student_applications').doc(id).get();
-      const d = doc.data();
-      openCustomerNotif({
-        clientEmail: d.studentEmail || '',
-        clientName: d.fullName || 'Student',
-        clientPhone: d.phone || '',
-        defaultTitle: 'University Student Program - Application Received',
-        defaultMessage: `Dear ${d.fullName},
-
-Thank you for applying to the Luviio University Student Program!
+async function sendUniNotif(id) {
+  const doc = await db.collection('uni_student_applications').doc(id).get();
+  const d = doc.data();
+  openCustomerNotif({
+    clientEmail: d.studentEmail || '',
+    clientName: d.fullName || 'Student',
+    clientPhone: d.phone || '',
+    defaultTitle: 'University Student Program - Application Received',
+    // REMOVED: "Dear ${d.fullName}," and "Best regards,\nLuviio Team"
+    defaultMessage: `Thank you for applying to the Luviio University Student Program!
 
 Application Details:
 • University: ${d.university || '-'}
@@ -2225,16 +2332,13 @@ Application Details:
 • IC: ${d.icNumber || '-'}
 • Business Type: ${d.businessType || '-'}
 
-Our team will review your application and get back to you soon.
-
-Best regards,
-Luviio Team`,
-        serviceName: 'Uni Student Program',
-        renewedBy: 'Luviio Uni Program',
-        requestedBy: d.fullName || 'Student',
-        relevantDate: formatDate(d.createdAt)
-      });
-    }
+Our team will review your application and get back to you soon.`,
+    serviceName: 'Uni Student Program',
+    renewedBy: 'Luviio Uni Program',
+    requestedBy: d.fullName || 'Student',
+    relevantDate: formatDate(d.createdAt)
+  });
+}
 
     // ==========================================
     // SPECIAL CLIENT APPLICATIONS (FIXED SEARCH)
@@ -2295,33 +2399,29 @@ Luviio Team`,
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
 
-    async function sendSCNotif(id) {
-      const doc = await db.collection('special_client_applications').doc(id).get();
-      const d = doc.data();
-      openCustomerNotif({
-        clientEmail: d.email || '',
-        clientName: d.name || 'Special Client',
-        clientPhone: d.phone || '',
-        defaultTitle: 'Welcome to Luviio - Special Client Program',
-        defaultMessage: `Dear ${d.name},
-
-Thank you for your interest in Luviio's Special Client Program!
+async function sendSCNotif(id) {
+  const doc = await db.collection('special_client_applications').doc(id).get();
+  const d = doc.data();
+  openCustomerNotif({
+    clientEmail: d.email || '',
+    clientName: d.name || 'Special Client',
+    clientPhone: d.phone || '',
+    defaultTitle: 'Welcome to Luviio - Special Client Program',
+    // REMOVED: "Dear ${d.name}," and "Best regards,\n*Luviio Team*"
+    defaultMessage: `Thank you for your interest in Luviio's Special Client Program!
 
 We're excited to offer you a **30-day free trial** of our premium services.
 
 Your Message:
 "${d.message || '-'}"
 
-Our team will reach out shortly to get you started.
-
-Best regards,
-Luviio Team`,
-        serviceName: 'Special Client Program (30-Day Trial)',
-        renewedBy: 'Luviio Sales',
-        requestedBy: d.name || 'Special Client',
-        relevantDate: formatDate(d.createdAt)
-      });
-    }
+Our team will reach out shortly to get you started.`,
+    serviceName: 'Special Client Program (30-Day Trial)',
+    renewedBy: 'Luviio Sales',
+    requestedBy: d.name || 'Special Client',
+    relevantDate: formatDate(d.createdAt)
+  });
+}
 
     // ==========================================
     // TABLE SEARCH UTILITY (for new pages)
@@ -2432,19 +2532,114 @@ Luviio Team`,
         <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">${ed?'Update':'Add'} Client</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
       </form>`;
     }
-    function getSubscriptionModal(data) {
-      const ed = !!data;
-      return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">${ed?'Edit':'New'} Subscription</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
-      <form onsubmit="saveSubscription(event,'${data?.id||''}')" class="p-6 space-y-4">
-        <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Client Name *</label><input name="clientName" required class="input-field" value="${data?.clientName||''}" placeholder="Type to search client..."></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Plan Name</label><input name="planName" class="input-field" value="${data?.planName||''}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Price (RM/mo) *</label><input name="price" type="number" step="0.01" required class="input-field" value="${data?.price||''}"></div></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Billing Cycle</label><select name="billingCycle" class="input-field"><option ${data?.billingCycle==='Monthly'?'selected':''}>Monthly</option><option ${data?.billingCycle==='Quarterly'?'selected':''}>Quarterly</option><option ${data?.billingCycle==='Yearly'?'selected':''}>Yearly</option></select></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Status</label><select name="status" class="input-field"><option value="active" ${(!data||data?.status==='active')?'selected':''}>Active</option><option value="paused" ${data?.status==='paused'?'selected':''}>Paused</option><option value="cancelled" ${data?.status==='cancelled'?'selected':''}>Cancelled</option></select></div></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Start Date</label><input name="startDate" type="date" class="input-field" value="${formatDateInput(data?.startDate)}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Next Billing</label><input name="nextBillingDate" type="date" class="input-field" value="${formatDateInput(data?.nextBillingDate)}"></div></div>
-        <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Stripe Customer ID</label><input name="stripeCustomerId" class="input-field" value="${data?.stripeCustomerId||''}"></div>
-        ${remarksFieldHTML(data?.remarks)}
-        <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">${ed?'Update':'Create'}</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
-      </form>`;
-    }
+function getSubscriptionModal(data) {
+  const ed = !!data;
+  
+  // Determine if existing data is custom or preset for dropdown default
+  const isCustomPlan = data?.planName && !['Starter Plan','Growth Plan','Pro IT Services Plan'].includes(data.planName);
+  
+  return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">${ed?'Edit':'New'} Subscription</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
+  <form onsubmit="saveSubscription(event,'${data?.id||''}')" class="p-6 space-y-4">
+    <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Client Name *</label><input name="clientName" required class="input-field" value="${data?.clientName||''}" placeholder="Type to search client..."></div>
+    
+    <!-- Plan Dropdown -->
+    <div>
+      <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Plan Name *</label>
+      <select name="planName" id="subPlanSelect" class="input-field" onchange="updateSubPrice(this.value)">
+        <option value="">Select a plan...</option>
+        <option value="Starter Plan|150" ${data?.planName==='Starter Plan'?'selected':''}>Starter Plan — RM150/month</option>
+        <option value="Growth Plan|300" ${data?.planName==='Growth Plan'?'selected':''}>Growth Plan — RM300/month</option>
+        <option value="Pro IT Services Plan|1900" ${data?.planName==='Pro IT Services Plan'?'selected':''}>Pro IT Services Plan — RM1900/month</option>
+        <option value="custom" ${isCustomPlan ? 'selected' : ''}>Custom Plan</option>
+      </select>
+      
+      <!-- Custom plan name input (hidden by default unless editing custom) -->
+      <div id="customPlanWrapper" style="${isCustomPlan ? '' : 'display:none;'} margin-top:8px;">
+        <input type="text" name="customPlanName" class="input-field !mt-1" value="${isCustomPlan ? data?.planName : ''}" placeholder="Enter custom plan name...">
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Price (RM/mo) *</label>
+        <input name="price" type="number" step="0.01" required class="input-field" id="subPriceInput" value="${data?.price||''}">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Billing Cycle *</label>
+        <select name="billingCycle" id="subBillingCycle" class="input-field" onchange="autoCalculateNextBilling()">
+          <option value="Monthly" ${(!data || data?.billingCycle==='Monthly') ? 'selected' : ''}>Monthly</option>
+          <option value="Quarterly" ${data?.billingCycle==='Quarterly'?'selected':''}>Quarterly</option>
+          <option value="Yearly" ${data?.billingCycle==='Yearly'?'selected':''}>Yearly</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Start Date *</label>
+        <input name="startDate" type="date" class="input-field" id="subStartDate" value="${formatDateInput(data?.startDate)}" onchange="autoCalculateNextBilling()">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Next Billing (Auto)</label>
+        <input name="nextBillingDate" type="date" class="input-field" id="subNextBilling" value="${formatDateInput(data?.nextBillingDate)}" readonly style="background:#f8fafc; cursor:not-allowed;">
+        <p class="text-[10px] text-slate-400 mt-1">Automatically calculated based on Start Date + Cycle</p>
+      </div>
+    </div>
+    
+    <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Stripe Customer ID</label><input name="stripeCustomerId" class="input-field" value="${data?.stripeCustomerId||''}"></div>
+    ${remarksFieldHTML(data?.remarks)}
+    <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">${ed?'Update':'Create'}</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
+  </form>`;
+}
+
+// Helper: Update price when plan selected
+function updateSubPrice(value) {
+  const priceInput = document.getElementById('subPriceInput');
+  const customWrapper = document.getElementById('customPlanWrapper');
+  
+  if (!value || value === 'custom') {
+    if (customWrapper) customWrapper.style.display = '';
+    priceInput.value = '';
+    priceInput.focus();
+  } else {
+    if (customWrapper) customWrapper.style.display = 'none';
+    const parts = value.split('|');
+    if (parts[1]) priceInput.value = parts[1];
+  }
+  
+  // Also recalculate billing date after price change (in case cycle was set)
+  autoCalculateNextBilling();
+}
+
+// NEW: Auto-calculate Next Billing Date based on Start Date + Billing Cycle
+function autoCalculateNextBilling() {
+  const startDateStr = document.getElementById('subStartDate')?.value;
+  const cycle = document.getElementById('subBillingCycle')?.value;
+  const nextBillingInput = document.getElementById('subNextBilling');
+  
+  if (!startDateStr || !cycle || !nextBillingInput) return;
+  
+  const startDate = new Date(startDateStr);
+  const nextDate = new Date(startDate);
+  
+  switch(cycle) {
+    case 'Monthly':
+      nextDate.setMonth(nextDate.getMonth() + 1); // +1 month
+      break;
+    case 'Quarterly':
+      nextDate.setMonth(nextDate.getMonth() + 3); // +3 months
+      break;
+    case 'Yearly':
+      nextDate.setFullYear(nextDate.getFullYear() + 1); // +1 year
+      break;
+    default:
+      return;
+  }
+  
+  // Format as YYYY-MM-DD for input field
+  const formatted = nextDate.toISOString().split('T')[0];
+  nextBillingInput.value = formatted;
+}
     function getRequestModal() {
       return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">Log Client Request</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
       <form onsubmit="saveRequest(event)" class="p-6 space-y-4">
@@ -2455,17 +2650,96 @@ Luviio Team`,
         <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">Save Request</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
       </form>`;
     }
-    function getInvoiceModal() {
-      return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">Create Invoice</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
-      <form onsubmit="saveInvoice(event)" class="p-6 space-y-4">
-        <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Client Name *</label><input name="clientName" required class="input-field" placeholder="Type to search client or team..."></div>
-        <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Description *</label><textarea name="description" required rows="2" class="input-field resize-none"></textarea></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Amount (RM) *</label><input name="amount" type="number" step="0.01" required class="input-field"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Status</label><select name="status" class="input-field"><option value="pending">Pending</option><option value="sent">Sent</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select></div></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Issue Date</label><input name="issueDate" type="date" class="input-field" value="${new Date().toISOString().split('T')[0]}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Due Date</label><input name="dueDate" type="date" class="input-field"></div></div>
-        ${remarksFieldHTML()}
-        <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">Create Invoice</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
-      </form>`;
+function getInvoiceModal() {
+  return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">Create Invoice</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
+  <form onsubmit="saveInvoice(event)" class="p-6 space-y-4">
+    <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Client Name *</label><input name="clientName" required class="input-field" placeholder="Type to search client or team..."></div>
+    
+    <!-- Service/Plan Dropdown -->
+    <div>
+      <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Service / Plan *</label>
+      <select name="servicePlan" id="invoiceServicePlan" required class="input-field" onchange="updateInvoiceFromPlan(this.value)">
+        <option value="">Select a plan...</option>
+        <option value="Starter Plan|150">Starter Plan — RM150</option>
+        <option value="Growth Plan|300">Growth Plan — RM300</option>
+        <option value="Pro IT Services Plan|1900">Pro IT Services Plan — RM1900</option>
+        <option value="custom">Custom Amount</option>
+      </select>
+      
+      <!-- Custom service name (hidden by default) -->
+      <div id="invoiceCustomServiceWrapper" style="display:none; margin-top:8px;">
+        <input type="text" name="customServiceName" class="input-field" placeholder="Enter custom service name...">
+      </div>
+    </div>
+    
+    <!-- Description now auto-fills from plan selection -->
+    <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Description *</label><textarea name="description" required rows="2" class="input-field resize-none" id="invoiceDescInput"></textarea></div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Amount (RM) *</label>
+        <input name="amount" type="number" step="0.01" required class="input-field" id="invoiceAmount" placeholder="0.00">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Status</label>
+        <select name="status" class="input-field">
+          <option value="pending">Pending</option>
+          <option value="sent">Sent</option>
+          <option value="paid">Paid</option>
+          <option value="overdue">Overdue</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Issue Date</label><input name="issueDate" type="date" class="input-field" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Due Date</label><input name="dueDate" type="date" class="input-field"></div>
+    </div>
+    
+    ${remarksFieldHTML()}
+    <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">Create Invoice</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
+  </form>`;
+}
+
+// UPDATED: Now handles both Amount AND Description auto-fill
+function updateInvoiceFromPlan(value) {
+  const amountInput = document.getElementById('invoiceAmount');
+  const descInput = document.getElementById('invoiceDescInput'); // NEW: Description field
+  const customWrapper = document.getElementById('invoiceCustomServiceWrapper'); // NEW: Custom wrapper
+  
+  if (!value || value === 'custom') {
+    // Show custom input, clear auto-fills
+    if (customWrapper) customWrapper.style.display = '';
+    if (amountInput) {
+      amountInput.value = '';
+      amountInput.placeholder = 'Enter custom amount';
     }
+    if (descInput) descInput.value = ''; // Clear description
+    // Focus on custom service name input if visible
+    setTimeout(() => {
+      const customInput = document.querySelector('[name="customServiceName"]');
+      if (customInput) customInput.focus();
+    }, 100);
+  } else {
+    // Hide custom field, auto-fill both fields from selection
+    if (customWrapper) customWrapper.style.display = 'none';
+    
+    const parts = value.split('|');
+    const serviceName = parts[0]; // "Starter Plan"
+    const price = parts[1];       // "150"
+    
+    // Auto-fill Amount
+    if (amountInput) {
+      amountInput.value = price;
+      amountInput.placeholder = price;
+    }
+    
+    // NEW: Auto-fill Description with service name + price
+    if (descInput) {
+      descInput.value = `${serviceName} Subscription — RM${price}`;
+    }
+  }
+}
     function getFeedbackModal() {
       return `<div class="p-6 border-b border-slate-100"><div class="flex items-center justify-between"><h3 class="font-semibold text-lg text-slate-800">Log Feedback / Complaint</h3><button onclick="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></div></div>
       <form onsubmit="saveFeedback(event)" class="p-6 space-y-4">
@@ -2562,7 +2836,45 @@ Luviio Team`,
     // SAVE FUNCTIONS
     // ==========================================
     async function saveClient(e, id) { e.preventDefault(); const f=e.target; const data = { name:f.name.value, businessName:f.businessName.value, email:f.email.value, phone:f.phone.value, businessType:f.businessType.value, plan:f.plan.value, status:f.status.value, website:f.website.value, remarks:f.remarks.value, updatedAt:firebase.firestore.FieldValue.serverTimestamp() }; try { if(id){await db.collection('clients').doc(id).update(data);showToast('Client updated!');cachedClients[id]=data;}else{ data.createdAt=firebase.firestore.FieldValue.serverTimestamp(); const ref=await db.collection('clients').add(data);cachedClients[ref.id]=data;showToast('Client added!');addNotification('New Client',`${data.name} (${data.businessName})`,'info'); } closeModal(); renderClients(); } catch(err){showToast('Error: '+err.message,'error');} }
-    async function saveSubscription(e, id) { e.preventDefault(); const f=e.target; const data = { clientName:f.clientName.value, planName:f.planName.value, price:parseFloat(f.price.value), billingCycle:f.billingCycle.value, status:f.status.value, startDate:f.startDate.value?new Date(f.startDate.value):null, nextBillingDate:f.nextBillingDate.value?new Date(f.nextBillingDate.value):null, stripeCustomerId:f.stripeCustomerId.value, remarks:f.remarks.value, updatedAt:firebase.firestore.FieldValue.serverTimestamp() }; try { if(id){await db.collection('subscriptions').doc(id).update(data);showToast('Updated!');}else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection('subscriptions').add(data);showToast('Created!');addNotification('New Subscription',data.clientName,'info');} closeModal(); renderSubscriptions(); } catch(err){showToast('Error','error');} }
+async function saveSubscription(e, id) { 
+  e.preventDefault(); 
+  const f=e.target; 
+  
+  // Determine actual plan name (from dropdown or custom input)
+  let planName = f.planName.value;
+  if (planName === 'custom') {
+    planName = f.customPlanName?.value || 'Custom Plan';
+  } else if (planName.includes('|')) {
+    planName = planName.split('|')[0]; // Extract just "Starter Plan" etc.
+  }
+
+  const data = { 
+    clientName:f.clientName.value, 
+    planName: planName,
+    price:parseFloat(f.price.value), 
+    billingCycle:f.billingCycle.value, 
+    status:f.status.value, 
+    startDate:f.startDate.value?new Date(f.startDate.value):null, 
+    nextBillingDate:f.nextBillingDate.value?new Date(f.nextBillingDate.value):null, 
+    stripeCustomerId:f.stripeCustomerId.value, 
+    remarks:f.remarks.value, 
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp() 
+  }; 
+  
+  try { 
+    if(id){
+      await db.collection('subscriptions').doc(id).update(data);
+      showToast('Updated!');
+    }else{
+      data.createdAt=firebase.firestore.FieldValue.serverTimestamp(); 
+      await db.collection('subscriptions').add(data); 
+      showToast('Created!'); 
+      addNotification('New Subscription',data.clientName,'info'); 
+    } 
+    closeModal(); 
+    renderSubscriptions(); 
+  } catch(err){showToast('Error','error');} 
+}    
     async function saveRequest(e) { e.preventDefault(); const f=e.target; const data = { clientName:f.clientName.value, type:f.type.value, price:parseFloat(f.price.value)||0, details:f.details.value, status:'pending', remarks:f.remarks.value, createdAt:firebase.firestore.FieldValue.serverTimestamp() }; try { await db.collection('client_requests').add(data); closeModal(); renderRequests(); showToast('Request logged!'); } catch(err){showToast('Error','error');} }
     async function saveInvoice(e) { e.preventDefault(); const f=e.target; const data = { clientName:f.clientName.value, description:f.description.value, amount:parseFloat(f.amount.value), status:f.status.value, issueDate:f.issueDate.value?new Date(f.issueDate.value):null, dueDate:f.dueDate.value?new Date(f.dueDate.value):null, remarks:f.remarks.value, createdAt:firebase.firestore.FieldValue.serverTimestamp() }; try { await db.collection('invoices').add(data); closeModal(); renderInvoices(); showToast('Invoice created!'); } catch(err){showToast('Error','error');} }
     async function saveFeedback(e) { e.preventDefault(); const f=e.target; const data = { clientName:f.clientName.value, type:f.type.value, subject:f.subject.value, message:f.message.value, status:'new', remarks:f.remarks.value, createdAt:firebase.firestore.FieldValue.serverTimestamp() }; try { await db.collection('feedback').add(data); closeModal(); renderFeedback(); showToast('Saved!'); } catch(err){showToast('Error','error');} }
@@ -2635,4 +2947,4 @@ Luviio Team`,
     }
   </script>
 </body>
-</html>
+</html> 
