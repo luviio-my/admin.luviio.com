@@ -233,8 +233,8 @@
     .af-badge-client { background: #fce7f3; color: #be185d; }
     .af-badge-team { background: #dbeafe; color: #1d4ed8; }
 
-    /* Table Search Dropdown */
-    .search-container { position: relative; }
+    /* Table Search Dropdown - FIXED: Centered SVG */
+    .search-container { position: relative; display: flex; align-items: center; }
     .search-dropdown {
       position: absolute; top: 100%; left: 0; right: 0;
       background: white; border: 1px solid #e2e8f0; border-radius: 12px;
@@ -255,6 +255,26 @@
     }
     .search-no-results {
       padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;
+    }
+
+    /* Search input with centered icon */
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-input-wrapper svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #94a3b8;
+      flex-shrink: 0;
+    }
+    .search-input-wrapper input {
+      padding-left: 36px !important;
+      width: 100%;
     }
 
     .modal-overlay {
@@ -447,6 +467,44 @@
     }
     .gallery-strip img:hover { border-color: rgba(255,255,255,0.5); }
     .gallery-strip img.active { border-color: #ff005e; box-shadow: 0 0 0 2px rgba(255,0,94,0.4); }
+
+    /* Content Update Image Grid Styles */
+    .cu-image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .cu-image-item {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid #e2e8f0;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .cu-image-item:hover {
+      border-color: #ff005e;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255,0,94,0.2);
+    }
+    .cu-image-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cu-image-count-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
@@ -1290,7 +1348,7 @@ Best regards,
             <div class="stat-card"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl ${profit>=0?'bg-green-50':'bg-red-50'} flex items-center justify-center"><svg class="w-5 h-5 ${profit>=0?'text-green-600':'text-red-600'}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div></div><p class="text-2xl font-bold ${profit>=0?'text-green-600':'text-red-600'}">RM${profit.toLocaleString()}</p><p class="text-xs text-slate-500 mt-1">Net Profit</p></div>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="content-card p-6"><h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Quick Actions</h3><div class="space-y-2">${hasPermission('edit') && hasPermission('clients') ? `<button onclick="openModal('addClient')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>Add New Client</button>` : ''}${hasPermission('edit') && hasPermission('expenses') ? `<button onclick="openModal('addExpense')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Log Expense</button>` : ''}${hasPermission('edit') && hasPermission('invoices') ? `<button onclick="openModal('addInvoice')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Create Invoice</button>` : ''}${(hasPermission('sendEmail')||hasPermission('sendWhatsApp')) ? `<button onclick="openQuickSendNotif()" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Send Notification</button>` : ''}</div></div>
+            <div class="content-card p-6"><h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Quick Actions</h3><div class="space-y-2">${hasPermission('edit') && hasPermission('clients') ? `<button onclick="openModal('addClient')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>Add New Client</button>` : ''}${hasPermission('edit') && hasPermission('expenses') ? `<button onclick="openModal('addExpense')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v6m0-3h6m-6 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Log Expense</button>` : ''}${hasPermission('edit') && hasPermission('invoices') ? `<button onclick="openModal('addInvoice')" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Create Invoice</button>` : ''}${(hasPermission('sendEmail')||hasPermission('sendWhatsApp')) ? `<button onclick="openQuickSendNotif()" class="w-full btn-secondary !justify-start text-left"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>Send Notification</button>` : ''}</div></div>
             <div class="lg:col-span-2 content-card"><div class="p-5 border-b border-slate-100 flex items-center justify-between"><h3 class="font-semibold text-slate-800 text-sm">Recent Invoices</h3>${hasPermission('invoices') ? `<button onclick="navigateTo('invoices')" class="text-xs text-pink-600 font-medium hover:underline">View All</button>` : ''}</div><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Remarks</th></tr></thead><tbody>${invoicesSnap.docs.length===0?'<tr><td colspan="5" class="text-center text-slate-400 py-8">No invoices yet</td></tr>':invoicesSnap.docs.map(doc=>{const d=doc.data();return`<tr><td class="font-mono text-xs">#${doc.id.slice(0,8)}</td><td>${d.clientName||'-'}</td><td class="font-medium">RM${parseFloat(d.amount||0).toLocaleString()}</td><td>${getStatusBadge(d.status)}</td><td>${remarksCell(d.remarks)}</td></tr>`;}).join('')}</tbody></table></div></div>
           </div>
           
@@ -1345,7 +1403,13 @@ Best regards,
         const snap = await db.collection('clients').orderBy('createdAt','desc').get();
         const clientsList = [];
         snap.docs.forEach(doc => { const c = doc.data(); cachedClients[doc.id] = c; clientsList.push({ id: doc.id, name: c.name||'', businessName: c.businessName||'', email: c.email||'', phone: c.phone||'', businessType: c.businessType||'', plan: c.plan||'' }); });
-        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">All Clients (${snap.size})</h3><p class="text-xs text-slate-500 mt-0.5">Manage your client database</p></div><div class="flex gap-2"><div class="search-container relative"><input type="text" id="clientSearchInput" placeholder="Search by name or company..." class="input-field !w-72 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleClientSearch(this.value)" autocomplete="off"><svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg><div id="clientSearchDropdown" class="search-dropdown"></div></div>${hasPermission('edit')?`<button onclick="openModal('addClient')" class="btn-primary whitespace-nowrap"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Add Client</button>`:''}</div></div>
+        content.innerHTML = `<div class="animate-in space-y-6"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div><h3 class="font-semibold text-slate-800 text-lg">All Clients (${snap.size})</h3><p class="text-xs text-slate-500 mt-0.5">Manage your client database</p></div><div class="flex gap-2">
+          <!-- FIXED: Search with centered SVG using wrapper div -->
+          <div class="search-input-wrapper !w-72">
+            <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="clientSearchInput" placeholder="Search by name or company..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleClientSearch(this.value)" autocomplete="off">
+          </div>
+          ${hasPermission('edit')?`<button onclick="openModal('addClient')" class="btn-primary whitespace-nowrap"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>Add Client</button>`:''}</div></div>
         <div id="clientsDataStore" style="display:none;" data-clients='${JSON.stringify(clientsList)}'></div>
         <div class="content-card overflow-hidden"><div class="overflow-x-auto"><table class="data-table" id="client-table"><thead><tr><th>Client Name</th><th>Business Name</th><th>Email</th><th>Phone</th><th>Type</th><th>Plan</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="clientTableBody">${snap.docs.length===0?'<tr><td colspan="9" class="text-center text-slate-400 py-12">No clients found.</td></tr>':snap.docs.map(doc=>{const c=doc.data();return`<tr data-id="${doc.id}" data-search="${(c.name||''+' '+c.businessName||''+' '+c.email||''+' '+c.businessType||''+' '+c.plan||'').toLowerCase()}"><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-xs font-bold">${(c.name||'?')[0].toUpperCase()}</div><span class="font-medium text-sm">${c.name||'-'}</span></div></td><td class="text-sm text-slate-700 font-medium">${c.businessName||'<span class="text-slate-300 text-xs">-</span>'}</td><td class="text-slate-600 text-sm">${c.email||'-'}</td><td class="text-slate-600 text-sm">${c.phone||'-'}</td><td><span class="badge badge-neutral">${c.businessType||'-'}</span></td><td class="text-sm font-medium">${c.plan||'-'}</td><td>${getStatusBadge(c.status||'active')}</td><td class="text-xs text-slate-500">${formatDate(c.createdAt)}</td><td><div class="flex gap-1"><button onclick="viewClient('${doc.id}')" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500" title="View"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>${editBtnHTML('editClient',doc.id)}${(hasPermission('sendEmail')||hasPermission('sendWhatsApp'))?`<button onclick="sendToClient('${doc.id}')" class="p-1.5 rounded-lg hover:bg-green-50 text-slate-500 hover:text-green-600" title="Send Notification"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></button>`:''}${deleteBtnHTML('clients',doc.id,'client')}</div></td></tr>`;}).join('')}</tbody></table></div></div></div>`;
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
@@ -1764,7 +1828,7 @@ Best regards,
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Image Name *</label>
-            <input type="text" id="uploadImageName" class="input-field" placeholder="e.g., client-logo-v2" autofocus>
+            <input type="text" id="uploadImageName" class="input-field" placeholder="e.g., client-logo-v2, homepage-hero" autofocus>
             <p class="text-[10px] text-slate-400 mt-1">This name will be saved for easy identification</p>
           </div>
           <div class="flex gap-3 pt-2">
@@ -1870,7 +1934,7 @@ Best regards,
     }
 
     // ==========================================
-    // NEWSLETTER SUBSCRIBERS
+    // NEWSLETTER SUBSCRIBERS (FIXED SEARCH)
     // ==========================================
     async function renderNewsletter() {
       const content = document.getElementById('pageContent');
@@ -1883,9 +1947,10 @@ Best regards,
               <p class="text-xs text-slate-500 mt-0.5">Email addresses collected from the website newsletter form</p>
             </div>
             <div class="flex gap-2">
-              <div class="search-container relative">
-                <input type="text" id="newsletterSearch" placeholder="Search email..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'newsletterTableBody', 'email')" autocomplete="off">
-                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <!-- FIXED: Centered Search Icon -->
+              <div class="search-input-wrapper !w-64">
+                <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="newsletterSearch" placeholder="Search email..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'newsletterTableBody', 'email')" autocomplete="off">
               </div>
               ${hasPermission('delete') ? `<button onclick="exportCollection('newsletter_subscribers', 'newsletter-subscribers.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
             </div>
@@ -1936,85 +2001,117 @@ Best regards,
       });
     }
 
-    // ==========================================
-    // CONTENT UPDATES
-    // ==========================================
-    async function renderContentUpdates() {
-      const content = document.getElementById('pageContent');
-      try {
-        const snap = await db.collection('content_updates').orderBy('createdAt','desc').get();
-        content.innerHTML = `<div class="animate-in space-y-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 class="font-semibold text-slate-800 text-lg">Content Update Requests (${snap.size})</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Text, images, and branding change requests from the website</p>
-            </div>
-            <div class="flex gap-2">
-              <div class="search-container relative">
-                <input type="text" id="cuSearch" placeholder="Search by name or email..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'cuTableBody', ['name','email'])" autocomplete="off">
-                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              </div>
-              <div class="flex gap-1 bg-white rounded-xl p-1 border border-slate-200">
-                <button class="tab-btn active" onclick="filterCU('all', this)">All</button>
-                <button class="tab-btn" onclick="filterCU('Normal', this)">Normal</button>
-                <button class="tab-btn" onclick="filterCU('Urgent', this)">Urgent</button>
-                <button class="tab-btn" onclick="filterCU('Critical', this)">Critical</button>
-              </div>
-            </div>
+// ==========================================
+// CONTENT UPDATES (FIXED - Image Preview like Image Manager)
+// ==========================================
+async function renderContentUpdates() {
+  const content = document.getElementById('pageContent');
+  try {
+    const snap = await db.collection('content_updates').orderBy('createdAt','desc').get();
+    
+    // Build HTML string first
+    let html = `<div class="animate-in space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-semibold text-slate-800 text-lg">Content Update Requests (${snap.size})</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Text, images, and branding change requests from the website</p>
+        </div>
+        <div class="flex gap-2">
+          <!-- FIXED: Centered Search Icon -->
+          <div class="search-input-wrapper !w-64">
+            <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="cuSearch" placeholder="Search by name or email..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'cuTableBody', ['name','email'])" autocomplete="off">
           </div>
-          <div id="cuList" class="space-y-4">
-            ${snap.docs.length === 0 
-              ? '<div class="content-card p-12 text-center text-slate-400">No content update requests</div>'
-              : snap.docs.map(doc => {
-                  const d = doc.data();
-                  const images = (d.imageUrls || '').split(',').filter(u => u.trim());
-                  return `<div class="content-card p-5 cu-item" data-priority="${d.priority || 'Normal'}" data-search="${((d.name||'')+' '+(d.email||'')).toLowerCase()}">
-                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                      <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                          <span class="font-medium text-sm text-slate-800">${d.name || '-'}</span>
-                          <span class="text-xs text-slate-500">${d.email || '-'}</span>
-                          <span class="badge ${d.priority === 'Critical' ? 'badge-danger' : d.priority === 'Urgent' ? 'badge-warning' : 'badge-info'}">${d.priority || 'Normal'}</span>
-                          <span class="text-xs text-slate-400">${formatDate(d.createdAt)}</span>
-                        </div>
-                        <div class="flex flex-wrap gap-1.5 mb-2">
-                          ${(d.types || []).map(t => `<span class="badge badge-neutral text-[10px]">${t}</span>`).join('')}
-                          ${d.section ? `<span class="badge badge-purple text-[10px]">${d.section}</span>` : ''}
-                        </div>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-2">${d.details || '-'}</p>
- ${images.length > 0 ? `
-  <div class="flex gap-2 flex-wrap mt-1">
-    ${images.map((url, idx) => `
-      <img src="${url}" 
-           class="w-16 h-16 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity border border-slate-200" 
-           onclick="event.stopPropagation(); openGalleryPreview(${JSON.stringify(images)}, ${idx})" 
-           alt="Attachment ${idx+1}" 
-           loading="lazy" 
-           onerror="this.style.display='none'">
-    `).join('')}
-    ${images.length > 4 ? `<span class="text-xs text-slate-400 self-center">+${images.length - 4} more</span>` : ''}
-  </div>
-` : ''}
-                        <div class="text-xs text-slate-400 mt-2">
-                          Source: ${d.source ? `<a href="${d.source}" target="_blank" class="text-pink-600 hover:underline">${new URL(d.source).pathname}</a>` : '-'}
-                          ${d.whatsapp ? `· WA: ${d.whatsapp}` : ''}
-                          ${d.website ? `· Site: ${d.website}` : ''}
-                        </div>
-                      </div>
-                      <div class="flex gap-2 flex-shrink-0">
-                        ${(hasPermission('sendEmail') || hasPermission('sendWhatsApp')) ? `
-                          <button onclick="sendCUNotification('${doc.id}')" class="btn-secondary !py-2 !px-3 !text-xs">Notify</button>
-                        ` : ''}
-                        ${deleteRowBtnHTML('content_updates', doc.id, 'request')}
-                      </div>
-                    </div>
-                  </div>`;
-                }).join('')
-            }
+          <div class="flex gap-1 bg-white rounded-xl p-1 border border-slate-200">
+            <button class="tab-btn active" onclick="filterCU('all', this)">All</button>
+            <button class="tab-btn" onclick="filterCU('Normal', this)">Normal</button>
+            <button class="tab-btn" onclick="filterCU('Urgent', this)">Urgent</button>
+            <button class="tab-btn" onclick="filterCU('Critical', this)">Critical</button>
           </div>
-        </div>`;
-      } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
+        </div>
+      </div>
+      <div id="cuList" class="space-y-4">`;
+    
+    if (snap.docs.length === 0) {
+      html += '<div class="content-card p-12 text-center text-slate-400">No content update requests</div>';
+    } else {
+      snap.docs.forEach((doc, docIdx) => {
+        const d = doc.data();
+        
+        // Parse images safely
+        let images = [];
+        try {
+          if (d.imageUrls) {
+            if (Array.isArray(d.imageUrls)) images = d.imageUrls;
+            else images = String(d.imageUrls).split(',').map(s => s.trim()).filter(Boolean);
+          }
+        } catch(e) { 
+          console.warn('Failed to parse images for doc:', docIdx, e);
+          images = []; 
+        }
+        
+        // Store in global variable immediately (not via inline script)
+        if (!window._cuImageData) window._cuImageData = {};
+        window._cuImageData[docIdx] = images;
+        
+        // FIXED: Image Grid like Image Manager with click-to-preview
+        const imageGridHTML = images.length > 0 ? `
+          <div class="cu-image-grid" id="cu-images-${docIdx}">
+            ${images.map((url, imgIdx) => `
+              <div class="cu-image-item" onclick="event.stopPropagation(); openGalleryPreview(${JSON.stringify(images).replace(/"/g, '&quot;')}, ${imgIdx})">
+                <img src="${url}" alt="Attachment ${imgIdx+1}" loading="lazy" onerror="this.parentElement.style.display='none'">
+              </div>
+            `).join('')}
+            ${images.length > 4 ? `<div class="cu-image-count-badge">+${images.length - 4}</div>` : ''}
+          </div>
+        ` : '';
+        
+        html += `
+          <div class="content-card p-5 cu-item" data-priority="${d.priority || 'Normal'}" data-search="${((d.name||'')+' '+(d.email||'')).toLowerCase()}">
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <span class="font-medium text-sm text-slate-800">${d.name || '-'}</span>
+                  <span class="text-xs text-slate-500">${d.email || '-'}</span>
+                  <span class="badge ${d.priority === 'Critical' ? 'badge-danger' : d.priority === 'Urgent' ? 'badge-warning' : 'badge-info'}">${d.priority || 'Normal'}</span>
+                  <span class="text-xs text-slate-400">${formatDate(d.createdAt)}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 mb-2">
+                  ${(d.types || []).map(t => `<span class="badge badge-neutral text-[10px]">${t}</span>`).join('')}
+                  ${d.section ? `<span class="badge badge-purple text-[10px]">${d.section}</span>` : ''}
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-2">${d.details || '-'}</p>
+                
+                ${imageGridHTML}
+                
+                <div class="text-xs text-slate-400 mt-2">
+                  Source: ${d.source ? `<a href="${d.source}" target="_blank" class="text-pink-600 hover:underline">${new URL(d.source).pathname}</a>` : '-'}
+                  ${d.whatsapp ? `· WA: ${d.whatsapp}` : ''}
+                  ${d.website ? `· Site: ${d.website}` : ''}
+                </div>
+              </div>
+              <div class="flex gap-2 flex-shrink-0">
+                ${(hasPermission('sendEmail') || hasPermission('sendWhatsApp')) ? `
+                  <button onclick="sendCUNotification('${doc.id}')" class="btn-secondary !py-2 !px-3 !text-xs">Notify</button>
+                ` : ''}
+                ${deleteRowBtnHTML('content_updates', doc.id, 'request')}
+              </div>
+            </div>
+          </div>`;
+      });
     }
+    
+    html += `</div></div>`;
+    content.innerHTML = html;
+    
+    // Initialize handlers AFTER DOM is updated (no inline scripts needed)
+    // The data is already stored in window._cuImageData during the loop above
+    
+  } catch(e) { 
+    console.error('Content Updates Error:', e);
+    content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p><button onclick="renderContentUpdates()" class="btn-primary mt-4">Retry</button></div>`; 
+  }
+}
 
     function filterCU(priority, btn) {
       document.querySelectorAll('.cu-item').forEach(item => {
@@ -2050,7 +2147,7 @@ Thank you!`,
     }
 
     // ==========================================
-    // UNI STUDENT APPLICATIONS
+    // UNI STUDENT APPLICATIONS (FIXED SEARCH)
     // ==========================================
     async function renderUniStudents() {
       const content = document.getElementById('pageContent');
@@ -2063,9 +2160,10 @@ Thank you!`,
               <p class="text-xs text-slate-500 mt-0.5">Student program applications with university verification</p>
             </div>
             <div class="flex gap-2">
-              <div class="search-container relative">
-                <input type="text" id="uniSearch" placeholder="Search by name, IC, uni..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'uniTableBody', ['fullName','icNumber','university','studentEmail'])" autocomplete="off">
-                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <!-- FIXED: Centered Search Icon -->
+              <div class="search-input-wrapper !w-64">
+                <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="uniSearch" placeholder="Search by name, IC, uni..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'uniTableBody', ['fullName','icNumber','university','studentEmail'])" autocomplete="off">
               </div>
               ${hasPermission('delete') ? `<button onclick="exportCollection('uni_student_applications', 'uni-students.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
             </div>
@@ -2139,7 +2237,7 @@ Luviio Team`,
     }
 
     // ==========================================
-    // SPECIAL CLIENT APPLICATIONS
+    // SPECIAL CLIENT APPLICATIONS (FIXED SEARCH)
     // ==========================================
     async function renderSpecialClients() {
       const content = document.getElementById('pageContent');
@@ -2152,9 +2250,10 @@ Luviio Team`,
               <p class="text-xs text-slate-500 mt-0.5">Invited-only clients with 30-day free trial applications</p>
             </div>
             <div class="flex gap-2">
-              <div class="search-container relative">
-                <input type="text" id="scSearch" placeholder="Search by name, company..." class="input-field !w-64 !py-2 !pl-9 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'scTableBody', ['name','email','company'])" autocomplete="off">
-                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <!-- FIXED: Centered Search Icon -->
+              <div class="search-input-wrapper !w-64">
+                <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="scSearch" placeholder="Search by name, company..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'scTableBody', ['name','email','company'])" autocomplete="off">
               </div>
               ${hasPermission('delete') ? `<button onclick="exportCollection('special_client_applications', 'special-clients.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
             </div>
@@ -2397,7 +2496,7 @@ Luviio Team`,
         <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Service Name *</label><input name="serviceName" required class="input-field" value="${data?.serviceName||''}"></div>
         <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Description</label><input name="description" class="input-field" value="${data?.description||''}"></div>
         <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Cost (RM)</label><input name="cost" type="number" step="0.01" class="input-field" value="${data?.cost||''}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Billing Cycle</label><select name="billingCycle" class="input-field"><option value="month" ${data?.billingCycle==='month'?'selected':''}>Monthly</option><option value="year" ${(!data||data?.billingCycle==='year')?'selected':''}>Yearly</option></select></div></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Renewal Date</label><input name="renewalDate" type="date" class="input-field" value="${formatDateInput(data?.renewalDate)}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Account Email</label><input name="accountEmail" type="email" class="input-field" value="${data?.accountEmail||''}"></div></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Renewal Date</label><input name="renewalDate" type="date" class="input-field" value="${formatDateInput(data?.renewalDate)}"></div><div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Account Email</label><input name="accountEmail" type="email" class="input-field" value=" ${data?.accountEmail||''}"></div></div>
         <div><label class="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Login URL</label><input name="loginUrl" class="input-field" value="${data?.loginUrl||''}"></div>
         ${remarksFieldHTML(data?.remarks)}
         <div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1 justify-center">${ed?'Update':'Add'}</button><button type="button" onclick="closeModal()" class="btn-secondary">Cancel</button></div>
