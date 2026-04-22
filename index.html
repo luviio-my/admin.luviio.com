@@ -1732,7 +1732,7 @@ function showPage(page) {
           db.collection('uni_student_applications').orderBy('createdAt','desc').limit(5).get(),
           db.collection('special_client_applications').orderBy('createdAt','desc').limit(5).get(),
           db.collection('careers_positions').where('status','==','active').get(), // Active positions
-          db.collection('job_applications').orderBy('createdAt','desc').limit(5).get()
+          db.collection('career_applications').orderBy('createdAt','desc').limit(5).get()
         ]);
         let totalIncome=0, totalExpenses=0, totalCompSubs=0;
         invoicesSnap.forEach(d => { if(d.data().status==='paid') totalIncome+=parseFloat(d.data().amount||0); });
@@ -2846,7 +2846,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
       try {
         const [positionsSnap, applicationsSnap] = await Promise.all([
           db.collection('careers_positions').orderBy('createdAt','desc').get(),
-          db.collection('job_applications').orderBy('createdAt','desc').limit(10).get()
+          db.collection('career_applications').orderBy('createdAt','desc').limit(10).get()
         ]);
         
         const activePositions = positionsSnap.docs.filter(d => d.data().status === 'active').length;
@@ -2990,7 +2990,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
     async function renderJobApplications() {
       const content = document.getElementById('pageContent');
       try {
-        const snap = await db.collection('job_applications').orderBy('createdAt','desc').get();
+        const snap = await db.collection('career_applications').orderBy('createdAt','desc').get();
         content.innerHTML = `<div class="animate-in space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -3002,7 +3002,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
                 <svg class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <input type="text" id="jaSearch" placeholder="Search by name, email..." class="input-field !py-2 !pr-4 !text-xs" oninput="handleTableSearch(this.value, 'jaTableBody', ['fullName','email','positionTitle'])" autocomplete="off">
               </div>
-              ${hasPermission('delete') ? `<button onclick="exportCollection('job_applications', 'job-applications.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
+              ${hasPermission('delete') ? `<button onclick="exportCollection('career_applications', 'career-applications.csv')" class="btn-secondary"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Export CSV</button>` : ''}
               
               <!-- Filter by status -->
               <div class="flex gap-1 bg-white rounded-xl p-1 border border-slate-200">
@@ -3093,7 +3093,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
                         </div>
                         ` : ''}
                         
-                        ${deleteRowBtnHTML('job_applications', doc.id, 'application')}
+                        ${deleteRowBtnHTML('career_applications', doc.id, 'application')}
                       </div>
                     </div>
                   </div>
@@ -3116,7 +3116,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
     // Update job application status
     async function updateJobAppStatus(id, newStatus) {
       try {
-        await db.collection('job_applications').doc(id).update({
+        await db.collection('career_applications').doc(id).update({
           status: newStatus,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -3135,7 +3135,7 @@ Thank you for trusting Luviio with your business. Let's build something amazing 
     // Send notification to job applicant
 async function sendJobAppNotif(id) {
   try {
-    const doc = await db.collection('job_applications').doc(id).get();
+    const doc = await db.collection('career_applications').doc(id).get();
     const a = doc.data();
     const currentStatus = a.status || 'pending'; // Get status from database
     
