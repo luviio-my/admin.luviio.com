@@ -2348,9 +2348,9 @@ async function renderContentUpdates() {
         clientName: d.name || 'Client',
         clientPhone: d.whatsapp || '',
         defaultTitle: `Content Update Request Received - ${d.types?.join(', ') || 'Update'}`,
-        defaultMessage: `Dear ${d.name || 'there'},
+        defaultMessage: `We have received your content update request regarding "${d.section || 'your website'}".
 
-We have received your content update request regarding "${d.section || 'your website'}". Our creative team will review your submission and get back to you within 2-3 business days.
+Our creative team will review your submission and get back to you within 2-3 business days.
 
 Request Details:
 • Type: ${d.types?.join(', ') || 'Update'}
@@ -2443,9 +2443,9 @@ async function sendUniNotif(id) {
     clientName: d.fullName || 'Student',
     clientPhone: d.phone || '',
     defaultTitle: 'University Student Program - Application Received',
-    defaultMessage: `Dear ${d.fullName || 'Student'},
+    defaultMessage: `Thank you for your interest in the Luviio University Student Program!
 
-Thank you for your interest in the Luviio University Student Program! We are excited to review your application.
+We are excited to review your application.
 
 Application Details:
 • Full Name: ${d.fullName || '-'}
@@ -2534,9 +2534,9 @@ async function sendSCNotif(id) {
     clientName: d.name || 'Special Client',
     clientPhone: d.phone || '',
     defaultTitle: 'Welcome to Luviio Special Client Program',
-    defaultMessage: `Dear ${d.name || 'Valued Entrepreneur'},
+    defaultMessage: `Welcome to the Luviio family!
 
-Welcome to the Luviio family! We are thrilled to offer you our exclusive Special Client Program, which includes a **30-day free trial** of our premium services.
+We are thrilled to offer you our exclusive Special Client Program, which includes a **30-day free trial** of our premium services.
 
 What's Included in Your Trial:
 ✅ Full access to all premium features
