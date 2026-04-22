@@ -1216,27 +1216,120 @@ Best regards,
       { id: 'custom', name: 'Custom Message', icon: '✏️', emailTitle: '', emailMessage: '', waMessage: '', category: 'Custom' }
     ];
 
-    function renderEmailPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
-      return EMAIL_HTML_TEMPLATE
-        .replace(/\{\{email_title\}\}/g, title || 'Notification from Luviio')
-        .replace(/\{\{recipient_name\}\}/g, recipientName || 'Valued Customer')
-        .replace(/\{\{message\}\}/g, message ? message.replace(/\n/g, '<br/>') : '-')
-        .replace(/\{\{service_name\}\}/g, serviceName || '-')
-        .replace(/\{\{renewed_by\}\}/g, renewedBy || '-')
-        .replace(/\{\{requested_by\}\}/g, requestedBy || '-')
-        .replace(/\{\{renewal_date\}\}/g, renewalDate || '-');
-    }
+function renderEmailPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>${title || 'Notification from Luviio'}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f7; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
-    function renderWaPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
-      return WA_TEXT_TEMPLATE
-        .replace(/\{\{recipient_name\}\}/g, recipientName || 'Valued Customer')
-        .replace(/\{\{title\}\}/g, title || 'Notification')
-        .replace(/\{\{message\}\}/g, message || '-')
-        .replace(/\{\{service_name\}\}/g, serviceName || '-')
-        .replace(/\{\{renewed_by\}\}/g, renewedBy || '-')
-        .replace(/\{\{requested_by\}\}/g, requestedBy || '-')
-        .replace(/\{\{renewal_date\}\}/g, renewalDate || '-');
-    }
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f7; padding:20px 0;">
+    <tr>
+      <td align="center">
+        
+        <!-- Main Card -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; padding:40px;">
+          
+          <tr>
+            <td style="padding-bottom:30px;">
+              <img src="https://images.luviio.com/luviio-logo-circle-v1.png" alt="Luviio" width="40" height="40" />
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:18px; color:#1d1d1f; padding-bottom:20px;">
+              Dear ${recipientName || 'Valued Customer'},
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
+              ${(message || '-').replace(/\n/g, '<br/>')}
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:16px; line-height:1.7; color:#3a3a3c; padding-bottom:25px;">
+              This is regarding the <strong style="color:#1d1d1f;">${serviceName || '-'}</strong>, which was handled by 
+              <strong style="color:#1d1d1f;">${renewedBy || '-'}</strong> following a request from 
+              <strong style="color:#1d1d1f;">${requestedBy || '-'}</strong> on 
+              <strong style="color:#1d1d1f;">${renewalDate || '-'}</strong>. If you need any clarification or further assistance regarding this service, our support team will be happy to help.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
+              For more details about this service and related features, you can explore our platform where additional information, guides, and updates are available to help you get the most out of your experience.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:25px;">
+              If you have any questions, feel free to contact our support team at 
+              <a href="mailto:support@luviio.com" style="color:#0071e3; text-decoration:none;">support@luviio.com</a> 
+              or visit our help center via our 
+              <a href="https://luviio.com" style="color:#0071e3; text-decoration:none;">website page</a>. 
+              We are committed to assisting you as quickly as possible.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="font-size:16px; color:#1d1d1f;">
+              Take care,<br/>
+              <strong>We'luviio</strong>
+            </td>
+          </tr>
+
+        </table>
+
+        <!-- Footer -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="padding:20px 40px; color:#86868b; font-size:12px;">
+          <tr>
+            <td style="line-height:1.5;">
+              This email was sent by ${renewedBy || '-'} on behalf of Luviio.<br/><br/>
+              You are receiving this notification because you are associated with the requested service.<br/><br/>
+              Please do not reply to this message; it was automatically generated.<br/><br/>
+              For support inquiries, contact us at 
+              <a href="mailto:support@luviio.com" style="color:#86868b; text-decoration:underline;">support@luviio.com</a>.<br/><br/>
+              © 2026 Luviio. All rights reserved.
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
+}
+
+function renderWaPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
+  return `*${title || 'Notification'}*
+
+Dear ${recipientName || 'Valued Customer'},
+
+ ${message || '-'}
+
+📋 *Service Details:*
+This is regarding *${serviceName || '-'}*, which was handled by *${renewedBy || '-'}* following a request from *${requestedBy || '-'}* on *${renewalDate || '-'}*.
+
+If you need clarification or assistance, our support team is here to help! 
+
+For more details, guides, and updates, explore our platform.
+
+❓ *Need Help?*
+📧 Email: support@luviio.com
+🌐 Website: https://luviio.com
+
+We're committed to assisting you quickly!
+
+Best regards,
+*Luviio Team*
+© ${new Date().getFullYear()} Luviio`;
+}
     // ==========================================
     // EMAILJS SEND
     // ==========================================
@@ -2948,93 +3041,3 @@ async function saveSubscription(e, id) {
   </script>
 </body>
 </html> 
-
-i have update my EmailJS template to :
-
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <title>{{email_title}}</title>
-</head>
-<body style="margin:0; padding:0; background-color:#f5f5f7; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f5f5f7; padding:20px 0;">
-    <tr>
-      <td align="center">
-        
-        <!-- Main Card -->
-        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; padding:40px;">
-          
-          <tr>
-            <td style="padding-bottom:30px;">
-              <img src="https://images.luviio.com/luviio-logo-circle-v1.png" alt="Luviio" width="40" height="40" />
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:18px; color:#1d1d1f; padding-bottom:20px;">
-              Dear {{recipient_name}},
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
-              {{message}}
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:16px; line-height:1.7; color:#3a3a3c; padding-bottom:25px;">
-              This is regarding the <strong style="color:#1d1d1f;">{{service_name}}</strong>, which was handled by 
-              <strong style="color:#1d1d1f;">{{renewed_by}}</strong> following a request from 
-              <strong style="color:#1d1d1f;">{{requested_by}}</strong> on 
-              <strong style="color:#1d1d1f;">{{renewal_date}}</strong>. If you need any clarification or further assistance regarding this service, our support team will be happy to help.
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
-              For more details about this service and related features, you can explore our platform where additional information, guides, and updates are available to help you get the most out of your experience.
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:25px;">
-              If you have any questions, feel free to contact our support team at 
-              <a href="mailto:support@luviio.com" style="color:#0071e3; text-decoration:none;">support@luviio.com</a> 
-              or visit our help center via our 
-              <a href="https://luviio.com" style="color:#0071e3; text-decoration:none;">website page</a>. 
-              We are committed to assisting you as quickly as possible.
-            </td>
-          </tr>
-
-          <tr>
-            <td style="font-size:16px; color:#1d1d1f;">
-              Take care,<br/>
-              <strong>We'luviio</strong>
-            </td>
-          </tr>
-
-        </table>
-
-        <!-- Footer -->
-        <table width="600" cellpadding="0" cellspacing="0" border="0" style="padding:20px 40px; color:#86868b; font-size:12px;">
-          <tr>
-            <td style="line-height:1.5;">
-              This email was sent by {{renewed_by}} on behalf of Luviio.<br/><br/>
-              You are receiving this notification because you are associated with the requested service.<br/><br/>
-              Please do not reply to this message; it was automatically generated.<br/><br/>
-              For support inquiries, contact us at 
-              <a href="mailto:support@luviio.com" style="color:#86868b; text-decoration:underline;">support@luviio.com</a>.<br/><br/>
-              © 2026 Luviio. All rights reserved.
-            </td>
-          </tr>
-        </table>
-
-      </td>
-    </tr>
-  </table>
-
-</body>
-</html>
