@@ -1232,68 +1232,87 @@ function renderEmailPreview(title, message, serviceName, renewedBy, requestedBy,
         <!-- Main Card -->
         <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; padding:40px;">
           
+          <!-- Logo -->
           <tr>
             <td style="padding-bottom:30px;">
               <img src="https://images.luviio.com/luviio-logo-circle-v1.png" alt="Luviio" width="40" height="40" />
             </td>
           </tr>
 
+          <!-- Greeting -->
           <tr>
             <td style="font-size:18px; color:#1d1d1f; padding-bottom:20px;">
               Dear ${recipientName || 'Valued Customer'},
             </td>
           </tr>
 
+          <!-- Message -->
           <tr>
             <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
               ${(message || '-').replace(/\n/g, '<br/>')}
             </td>
           </tr>
 
+          <!-- Service Details - Professional Paragraph -->
           <tr>
-            <td style="font-size:16px; line-height:1.7; color:#3a3a3c; padding-bottom:25px;">
+            <td style="font-size:16px; line-height:1.8; color:#3a3a3c; padding-bottom:25px;">
               This is regarding the <strong style="color:#1d1d1f;">${serviceName || '-'}</strong>, which was handled by 
               <strong style="color:#1d1d1f;">${renewedBy || '-'}</strong> following a request from 
-              <strong style="color:#1d1d1f;">${requestedBy || '-'}</strong> on 
-              <strong style="color:#1d1d1f;">${renewalDate || '-'}</strong>. If you need any clarification or further assistance regarding this service, our support team will be happy to help.
+              <strong style="color:#1d1d1d1f;">${requestedBy || '-'}</strong> on 
+              <strong style="color:#1d1d1d1f;">${renewalDate || '-'}</strong>. 
+              <span style="display:block;margin-top:10px;color:#6b7280;font-size:15px;">
+                Should you require any clarification or further assistance regarding this service, our dedicated support team is readily available to help you.
+              </span>
             </td>
           </tr>
 
+          <!-- Platform Info -->
           <tr>
-            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:20px;">
-              For more details about this service and related features, you can explore our platform where additional information, guides, and updates are available to help you get the most out of your experience.
+            <td style="font-size:16px; line-height:1.7; color:#3a3a3c; padding-bottom:20px;">
+              For comprehensive details about this service and its associated features, we invite you to explore our platform. There, you will find additional information, helpful guides, and the latest updates designed to enhance your overall experience.
             </td>
           </tr>
 
+          <!-- Support Contact -->
           <tr>
-            <td style="font-size:16px; line-height:1.6; color:#3a3a3c; padding-bottom:25px;">
-              If you have any questions, feel free to contact our support team at 
-              <a href="mailto:support@luviio.com" style="color:#0071e3; text-decoration:none;">support@luviio.com</a> 
-              or visit our help center via our 
-              <a href="https://luviio.com" style="color:#0071e3; text-decoration:none;">website page</a>. 
-              We are committed to assisting you as quickly as possible.
+            <td style="font-size:16px; line-height:1.7; color:#3a3a3c; padding-bottom:25px;">
+              Should you have any inquiries or require assistance, please do not hesitate to reach out to our support team at 
+              <a href="mailto:support@luviio.com" style="color:#0071e3; text-decoration:none;font-weight:500;">support@luviio.com</a>. 
+              Alternatively, you may visit our help center through the 
+              <a href="https://luviio.com" style="color:#0071e3; text-decoration:none;font-weight:500;">official website</a>. 
+              <span style="display:block;margin-top:8px;color:#6b7280;font-size:14px;">
+                We remain committed to providing you with prompt and effective support.
+              </span>
             </td>
           </tr>
 
+          <!-- Signature -->
           <tr>
-            <td style="font-size:16px; color:#1d1d1f;">
-              Take care,<br/>
-              <strong>We'luviio</strong>
+            <td style="font-size:16px; color:#1d1d1d1f;padding-top:5px;">
+              Warm regards,<br/>
+              <strong style="font-size:17px;">We'luviio</strong>
             </td>
           </tr>
 
         </table>
 
-        <!-- Footer -->
-        <table width="600" cellpadding="0" cellspacing="0" border="0" style="padding:20px 40px; color:#86868b; font-size:12px;">
+        <!-- Professional Footer -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0" style="padding:25px 40px; color:#86868b; font-size:12px;line-height:1.6;border-top:1px solid #e5e7eb;">
           <tr>
-            <td style="line-height:1.5;">
-              This email was sent by ${renewedBy || '-'} on behalf of Luviio.<br/><br/>
-              You are receiving this notification because you are associated with the requested service.<br/><br/>
-              Please do not reply to this message; it was automatically generated.<br/><br/>
-              For support inquiries, contact us at 
-              <a href="mailto:support@luviio.com" style="color:#86868b; text-decoration:underline;">support@luviio.com</a>.<br/><br/>
-              © 2026 Luviio. All rights reserved.
+            <td>
+              <strong style="color:#374151;">Sender Information</strong><br/><br/>
+              This email was dispatched by <em>${renewedBy || 'Luviio Team'}</em> on behalf of Luviio.<br/><br/>
+              
+              <strong style="color:#374151;">Subscription Notice</strong><br/>
+              You are receiving this notification because you are registered for the aforementioned service.<br/><br/>
+              
+              <strong style="color:#374151;">Important Notice</strong><br/>
+              Please refrain from replying directly to this message, as it was automatically generated by our system.<br/><br/>
+              
+              For any support-related matters, please contact us at 
+              <a href="mailto:support@luviio.com" style="color:#0071e3;text-decoration:underline;font-weight:500;">support@luviio.com</a>.<br/><br/>
+              
+              © ${new Date().getFullYear()} Luviio. All rights reserved.
             </td>
           </tr>
         </table>
@@ -1307,24 +1326,38 @@ function renderEmailPreview(title, message, serviceName, renewedBy, requestedBy,
 }
 
 function renderWaPreview(title, message, serviceName, renewedBy, requestedBy, renewalDate, recipientName) {
-  return `*${title || 'Notification'}*
+  return `*${title || 'Notification from Luviio'}*
 
 Dear ${recipientName || 'Valued Customer'},
 
  ${message || '-'}
 
-📋 *Service Details:*
-This is regarding *${serviceName || '-'}*, which was handled by *${renewedBy || '-'}* following a request from *${requestedBy || '-'}* on *${renewalDate || '-'}*.
+━━━━━━━━━━━━━━━━━━━
 
-If you need clarification or assistance, our support team is here to help! 
+📋 *Service Information*
 
-For more details, guides, and updates, explore our platform.
+This notification concerns *${serviceName || 'Service'}*, processed by *${renewedBy || 'Luviio Team'}* upon request from *${requestedBy || 'Client'}* on *${renewalDate || 'Date'}*.
 
-❓ *Need Help?*
-📧 Email: support@luviio.com
-🌐 Website: https://luviio.com
+Should you need clarification, our support team is ready to assist you.
 
-We're committed to assisting you quickly!
+━━━━━━━━━━━━━━━━━━━
+
+📚 *Resource Center*
+
+For detailed information, user guides, and feature updates, please visit:
+🔗 https://luviio.com
+
+━━━━━━━━━━━━━━━━━━━
+
+💬 *Support Contact*
+
+Questions? We're here to help!
+📧 support@luviio.com
+🌐 https://luviio.com
+
+Your satisfaction is our priority.
+
+━━━━━━━━━━━━━━━━━━━
 
 Best regards,
 *Luviio Team*
