@@ -1660,7 +1660,7 @@ Best regards,
       } catch(e) { content.innerHTML=`<div class="content-card p-12 text-center"><p class="text-red-500">Error: ${e.message}</p></div>`; }
     }
     function filterRequests(s,btn) { document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); document.querySelectorAll('.request-item').forEach(i=>{i.style.display=(s==='all'||i.dataset.status===s)?'block':'none';}); }
-    async function completeRequestWithNotif(id) { const doc=await db.collection('client_requests').doc(id).get(); const d=doc.data(); const client=findClientByName(d.clientName||d.name); openCustomerNotif({ clientEmail:client?.email||'', clientName:d.clientName||d.name||'', clientPhone:client?.phone||'', defaultTitle:'Your Request Has Been Completed', defaultMessage:`We're pleased to inform you that your "${d.type||'update'}" request has been completed successfully.`, serviceName:d.type||'Client Request', renewedBy:'Luviio Team', requestedBy:d.clientName||d.name||'-', relevantDate:formatDate(new Date()), onSuccess: async()=>{ try{await db.collection('client_requests').doc(id).update({status:'completed'});renderRequests();showToast('Request completed!');addNotification('Request Completed',`${d.clientName||d.name}`,'success');}catch(err){showToast('Error','error');} } }); }
+    async function completeRequestWithNotif(id) { const doc=await db.collection('client_requests').doc(id).get(); const d=doc.data(); const client=findClientByName(d.clientName||d.name); openCustomerNotif({ clientEmail:client?.email||'', clientName:d.clientName||d.name||'', clientPhone:client?.phone||'', defaultTitle:'Your Request Has Been Completed', defaultMessage: `We are pleased to inform you that your "${d.type || 'request'}" has been successfully completed.  Thank you for your patience throughout the process. If you have any questions or require further assistance, please do not hesitate to contact our team.  We appreciate the opportunity to assist you.`, serviceName:d.type||'Client Request', renewedBy:'Luviio Team', requestedBy:d.clientName||d.name||'-', relevantDate:formatDate(new Date()), onSuccess: async()=>{ try{await db.collection('client_requests').doc(id).update({status:'completed'});renderRequests();showToast('Request completed!');addNotification('Request Completed',`${d.clientName||d.name}`,'success');}catch(err){showToast('Error','error');} } }); }
 
     // ==========================================
     // INVOICES
@@ -2330,13 +2330,12 @@ async function renderContentUpdates() {
         clientName: d.name || 'Client',
         clientPhone: d.whatsapp || '',
         defaultTitle: `Content Update: ${d.types?.join(', ') || 'Request'}`,
-        defaultMessage: `Hi ${d.name || 'there'},
+defaultMessage: `We are pleased to inform you that your content update request regarding "${d.section || d.types?.join(', ') || 'your website'}" has been successfully completed.
 
-We've received your content update request regarding "${d.section || 'your website'}". Our team will review it shortly.
+Thank you for your patience throughout the process. If you have any questions or require further assistance, please do not hesitate to contact our team.
 
-Details: ${d.details || '-'}
-
-Thank you!`,
+We appreciate the opportunity to assist you.`,
+        
         serviceName: 'Content Update Request',
         renewedBy: 'Luviio Content Team',
         requestedBy: d.name || 'Website Visitor',
@@ -2417,21 +2416,11 @@ async function sendUniNotif(id) {
     clientPhone: d.phone || '',
     defaultTitle: 'University Student Program - Application Received',
     // REMOVED: "Dear ${d.fullName}," and "Best regards,\nLuviio Team"
-    defaultMessage: `Thank you for applying to the Luviio University Student Program!
+    defaultMessage: `We are pleased to inform you that your University Student Program application has been successfully processed and is now under review.
 
-Application Details:
-• University: ${d.university || '-'}
-• Student ID: ${d.studentId || '-'}
-• IC: ${d.icNumber || '-'}
-• Business Type: ${d.businessType || '-'}
+Thank you for your patience throughout the process. If you have any questions or require further assistance regarding your application (Ref: ${doc.id.slice(0,8)}), please do not hesitate to contact our team.
 
-Our team will review your application and get back to you soon.`,
-    serviceName: 'Uni Student Program',
-    renewedBy: 'Luviio Uni Program',
-    requestedBy: d.fullName || 'Student',
-    relevantDate: formatDate(d.createdAt)
-  });
-}
+We appreciate the opportunity to assist you.`,
 
     // ==========================================
     // SPECIAL CLIENT APPLICATIONS (FIXED SEARCH)
@@ -2500,22 +2489,13 @@ async function sendSCNotif(id) {
     clientName: d.name || 'Special Client',
     clientPhone: d.phone || '',
     defaultTitle: 'Welcome to Luviio - Special Client Program',
-    // REMOVED: "Dear ${d.name}," and "Best regards,\n*Luviio Team*"
-    defaultMessage: `Thank you for your interest in Luviio's Special Client Program!
+    defaultMessage: `We are pleased to inform you that your Special Client Program application has been successfully received and is now being processed. You will be granted a 30-day free trial of our premium services.
 
-We're excited to offer you a **30-day free trial** of our premium services.
+Thank you for your patience throughout the process. If you have any questions or require further assistance, please do not hesitate to contact our team.
 
-Your Message:
-"${d.message || '-'}"
+We appreciate the opportunity to assist you.`,
 
-Our team will reach out shortly to get you started.`,
-    serviceName: 'Special Client Program (30-Day Trial)',
-    renewedBy: 'Luviio Sales',
-    requestedBy: d.name || 'Special Client',
-    relevantDate: formatDate(d.createdAt)
-  });
-}
-
+  
     // ==========================================
     // TABLE SEARCH UTILITY (for new pages)
     // ==========================================
